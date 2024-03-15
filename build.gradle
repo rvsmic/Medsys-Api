@@ -3,6 +3,7 @@ plugins {
 	id 'war'
 	id 'org.springframework.boot' version '3.2.3'
 	id 'io.spring.dependency-management' version '1.1.4'
+	id "com.microsoft.azure.azurewebapp" version "1.10.0"
 }
 
 group = 'com.medsys'
@@ -14,6 +15,25 @@ java {
 
 repositories {
 	mavenCentral()
+}
+
+azurewebapp {
+	subscription = '01c6d3fb-9f96-4450-ac9a-607c96273006'
+	resourceGroup = 'medsys'
+	appName = 'apimedsys'
+	pricingTier = 'F1'
+	region = 'Poland Central'
+	runtime {
+		os = 'Linux'
+		webContainer = 'Tomcat 9.0'
+		javaVersion = 'Java 17'
+	}
+	appSettings{
+
+	}
+	auth {
+		type = 'azure_cli' // support azure_cli, oauth2, device_code and service_principal
+	}
 }
 
 dependencies {
