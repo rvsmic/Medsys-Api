@@ -3,7 +3,7 @@ plugins {
 	id 'war'
 	id 'org.springframework.boot' version '3.2.3'
 	id 'io.spring.dependency-management' version '1.1.4'
-	id "com.microsoft.azure.azurewebapp" version "1.10.0"
+	id "com.microsoft.azure.azurewebapp" version "1.7.1"
 }
 
 group = 'com.medsys'
@@ -15,6 +15,10 @@ java {
 
 repositories {
 	mavenCentral()
+}
+
+ext {
+	set('springCloudAzureVersion', "5.10.0")
 }
 
 azurewebapp {
@@ -39,11 +43,19 @@ azurewebapp {
 dependencies {
 //	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'com.azure.spring:spring-cloud-azure-starter'
 	runtimeOnly 'org.postgresql:postgresql'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 //	testImplementation 'org.springframework.security:spring-security-test'
 }
+
+dependencyManagement {
+	imports {
+		mavenBom "com.azure.spring:spring-cloud-azure-dependencies:${springCloudAzureVersion}"
+	}
+}
+
 
 tasks.named('test') {
 	useJUnitPlatform()

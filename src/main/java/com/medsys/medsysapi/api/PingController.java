@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("ping")
 @CrossOrigin("*")
-public class IndexController {
+public class PingController {
     @GetMapping
-    public String index() {
-        return "Medsys API";
+    public String ping() {
+        return "Pong!";
     }
 }
