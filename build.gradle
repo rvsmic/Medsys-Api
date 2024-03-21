@@ -24,12 +24,13 @@ ext {
 azurewebapp {
 	subscription = '01c6d3fb-9f96-4450-ac9a-607c96273006'
 	resourceGroup = 'medsys'
-	appName = 'apimedsys'
+	// appName = 'medsysapi'
+	appName = 'medsysapitest'
 	pricingTier = 'F1'
 	region = 'Poland Central'
 	runtime {
 		os = 'Linux'
-		webContainer = 'Tomcat 9.0'
+		webContainer = 'Tomcat 10.0'
 		javaVersion = 'Java 17'
 	}
 	appSettings{
