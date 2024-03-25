@@ -25,7 +25,7 @@ azurewebapp {
 	subscription = '01c6d3fb-9f96-4450-ac9a-607c96273006'
 	resourceGroup = 'medsys'
 	// appName = 'medsysapi'
-	appName = 'medsysapitest'
+	appName = 'testmedsysapi'
 	pricingTier = 'F1'
 	region = 'Poland Central'
 	runtime {
