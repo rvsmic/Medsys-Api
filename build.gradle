@@ -3,7 +3,7 @@ plugins {
 	id 'war'
 	id 'org.springframework.boot' version '3.2.3'
 	id 'io.spring.dependency-management' version '1.1.4'
-	id "com.microsoft.azure.azurewebapp" version "1.10.0"
+	id "com.microsoft.azure.azurewebapp" version "1.7.1"
 }
 
 group = 'com.medsys'
@@ -17,15 +17,20 @@ repositories {
 	mavenCentral()
 }
 
+ext {
+	set('springCloudAzureVersion', "5.10.0")
+}
+
 azurewebapp {
 	subscription = '01c6d3fb-9f96-4450-ac9a-607c96273006'
 	resourceGroup = 'medsys'
-	appName = 'apimedsys'
+	// appName = 'medsysapi'
+	appName = 'testmedsysapi'
 	pricingTier = 'F1'
 	region = 'Poland Central'
 	runtime {
 		os = 'Linux'
-		webContainer = 'Tomcat 9.0'
+		webContainer = 'Tomcat 10.0'
 		javaVersion = 'Java 17'
 	}
 	appSettings{
@@ -39,11 +44,19 @@ azurewebapp {
 dependencies {
 //	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'com.azure.spring:spring-cloud-azure-starter'
 	runtimeOnly 'org.postgresql:postgresql'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 //	testImplementation 'org.springframework.security:spring-security-test'
 }
+
+dependencyManagement {
+	imports {
+		mavenBom "com.azure.spring:spring-cloud-azure-dependencies:${springCloudAzureVersion}"
+	}
+}
+
 
 tasks.named('test') {
 	useJUnitPlatform()
