@@ -19,13 +19,23 @@ repositories {
 
 ext {
 	set('springCloudAzureVersion', "5.10.0")
+	appNameTest = 'testmedsysapi'
+	appNameProd = 'medsysapi'
+}
+
+task bootWarTest(type: War) {
+	archiveFileName = 'app.war'
+	azurewebapp.appName = appNameTest
+}
+
+task bootWarProd(type: War) {
+	archiveFileName = 'app.war'
+	azurewebapp.appName = appNameProd
 }
 
 azurewebapp {
 	subscription = '01c6d3fb-9f96-4450-ac9a-607c96273006'
 	resourceGroup = 'medsys'
-	// appName = 'medsysapi'
-	appName = 'testmedsysapi'
 	pricingTier = 'F1'
 	region = 'Poland Central'
 	runtime {
@@ -42,13 +52,11 @@ azurewebapp {
 }
 
 dependencies {
-//	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.azure.spring:spring-cloud-azure-starter'
 	runtimeOnly 'org.postgresql:postgresql'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-//	testImplementation 'org.springframework.security:spring-security-test'
 }
 
 dependencyManagement {
@@ -57,6 +65,9 @@ dependencyManagement {
 	}
 }
 
+tasks.bootWar {
+	archiveFileName = 'app.war'
+}
 
 tasks.named('test') {
 	useJUnitPlatform()
