@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.medsys.medsysapi.api", "com.medsys.medsysapi.init"})
+@ComponentScan(basePackages = {"com.medsys.medsysapi.api", "com.medsys.medsysapi.init", "com.medsys.medsysapi.db"})
 public class MedsysApiApplication {
 
 	public static void main(String[] args) {

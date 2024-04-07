@@ -1,3 +1,5 @@
+// showcase class for displaying a simple message
+
 package com.medsys.medsysapi.api;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -6,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("ping")
+@RequestMapping("/ping")
 @CrossOrigin
 public class PingController {
     @GetMapping
