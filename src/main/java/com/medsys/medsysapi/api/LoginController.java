@@ -24,7 +24,7 @@ public class LoginController {
     SecUserDetailsService secUserDetailsService;
 
     @PostMapping
-    public ResponseEntity login(@RequestBody(required = true) String data) throws BadRequestException {
+    public ResponseEntity login(@RequestBody(required = true) String data) {
         int id = -1;
 
         String queryResult = "";
@@ -47,6 +47,8 @@ public class LoginController {
             }
         } catch (QueryException e) {
             return ErrorResponseHandler.generateErrorResponse(e.getStatus(), e);
+        } catch (BadRequestException e) {
+            return ErrorResponseHandler.generateErrorResponse(400, e);
         }
 
         return ErrorResponseHandler.generateErrorResponse(500, new Exception("Unexpected error at " + this.getClass().getSimpleName() + "::login"));

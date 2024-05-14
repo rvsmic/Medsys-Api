@@ -1,5 +1,5 @@
 <configuration>
-    <property name="LOG_DIR" value="logs"/>
+    <property name="LOG_DIR" value="/home/LogFiles/medsysApiLogs"/>
     <property name="LOG_FILE_NAME" value="medsysapi"/>
 
     <appender name="ROLLING_FILE_PROD" class="ch.qos.logback.core.rolling.RollingFileAppender">
