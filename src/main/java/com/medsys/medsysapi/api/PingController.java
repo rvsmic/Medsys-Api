@@ -1,5 +1,3 @@
-// showcase class for displaying a simple message
-
 package com.medsys.medsysapi.api;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class PingController {
     @GetMapping
     public String ping() {
-        return "Pong!";
+        // get active profile
+        String profile = System.getProperty("spring.profiles.active");
+        return "Active profile: " + profile;
     }
 }
