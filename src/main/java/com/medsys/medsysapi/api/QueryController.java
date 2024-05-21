@@ -14,7 +14,6 @@ import net.minidev.json.JSONObject;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,17 +36,17 @@ public class QueryController {
             String table = (String) jsonData.get("table");
             String column = (String) jsonData.get("column");
 
-//            SecUser user = secUserDetailsService.loadUserByToken(token);
+            SecUser user = secUserDetailsService.loadUserByToken(token);
 
-//            if(user.getAuthorities().contains(SecUserRoles.ROLE_ADMIN)) {
+            if(user.getAuthorities().contains(SecUserRoles.ROLE_ADMIN)) {
                 String sql = String.format("SELECT %s FROM %s", column, table);
                 String[] params = {};
 
                 QueryResults queryResults = queryDispatcher.dispatch(sql, params);
                 return new BasicResponse(200, "Query successful.", queryResults.getResults()).generateResponse();
-//            } else {
-//                return ErrorResponseHandler.generateErrorResponse(403, new Exception("You do not have permission to access this resource."));
-//            }
+            } else {
+                return ErrorResponseHandler.generateErrorResponse(403, new Exception("You do not have permission to access this resource."));
+            }
         } catch (QueryException e) {
             return ErrorResponseHandler.generateErrorResponse(e.getStatus(), e);
         } catch (BadRequestException e) {

@@ -1,6 +1,5 @@
 package com.medsys.medsysapi.api;
 
-import com.medsys.medsysapi.security.SecUser;
 import com.medsys.medsysapi.security.SecUserDetailsService;
 import com.medsys.medsysapi.utils.BasicResponse;
 import com.medsys.medsysapi.utils.JsonHandler;
