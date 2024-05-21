@@ -37,6 +37,14 @@ public class QueryException extends Exception {
         this.status = status;
     }
 
+    public String getMessage() {
+        if(cause == null) {
+            return super.getMessage();
+        } else {
+            return cause.getMessage();
+        }
+    }
+
     public int getStatus() {
         return status;
     }

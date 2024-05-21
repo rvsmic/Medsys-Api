@@ -11,5 +11,4 @@ public class MedsysApiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MedsysApiApplication.class, args);
 	}
-
 }

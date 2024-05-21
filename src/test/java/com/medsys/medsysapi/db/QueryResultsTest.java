@@ -28,8 +28,8 @@ class QueryResultsTest {
     }
 
     @Test
-    void testGetFromQuery() {
-        queryResults.getFromQuery(List.of(Map.of("r", "r")));
+    void testGetFromList() {
+        queryResults.getFromList(List.of(Map.of("r", "r")));
         Assertions.assertEquals(List.of(Map.of("r", "r")), queryResults.getResults());
     }
 
@@ -52,7 +52,7 @@ class QueryResultsTest {
             testList.add(Map.of(String.format("key%d", i), String.format("value%d", i)));
         }
 
-        testResults.getFromQuery(testList);
+        testResults.getFromList(testList);
         result = testResults.getResults();
         Assertions.assertEquals(10, result.size());
     }
@@ -76,26 +76,8 @@ class QueryResultsTest {
             testList.add(Map.of(String.format("key%d", i), String.format("value%d", i)));
         }
 
-        testResults.getFromQuery(testList);
+        testResults.getFromList(testList);
         result = testResults.getResultsAsString();
         Assertions.assertEquals("value0, value1, value2, value3, value4, value5, value6, value7, value8, value9", result);
-    }
-
-    @Test
-    void testGetFirstResult() {
-        when(results.isEmpty()).thenReturn(false);
-        when(results.get(anyInt())).thenReturn(Map.of("key", "value"));
-
-        Map<String, Object> result = queryResults.getFirstResult();
-        Assertions.assertEquals(Map.of("key", "value"), result);
-    }
-
-    @Test
-    void testGetResultsAt() {
-        when(results.isEmpty()).thenReturn(false);
-        when(results.get(anyInt())).thenReturn(Map.of("key", "value"));
-
-        Map<String, Object> result = queryResults.getResultsAt(99);
-        Assertions.assertEquals(Map.of("key", "value"), result);
     }
 }

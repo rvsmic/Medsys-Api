@@ -3,42 +3,59 @@ package com.medsys.medsysapi.db;
 import com.medsys.medsysapi.security.SecUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+@Service
 public class QueryDispatcher {
 
-    static Logger logger = LoggerFactory.getLogger(QueryDispatcher.class);
+    private final Logger logger = LoggerFactory.getLogger(QueryDispatcher.class);
 
-    public static QueryResults dispatch(JdbcTemplate jdbcTemplate, String table, String column) throws QueryException {
+    @Autowired
+    DataSource dataSource;
+
+    protected Connection connection;
+
+    public QueryDispatcher() {
+    }
+
+    public QueryResults dispatch(String sql, String[] params) throws QueryException {
         try {
+            connection = dataSource.getConnection();
+            PreparedStatement p = connection.prepareStatement(sql);
+
+            for (int i = 0; i < params.length; i++) {
+                p.setString(i + 1, params[i]);
+            }
             QueryResults queryResults = new QueryResults();
-            queryResults.getFromQuery(jdbcTemplate.queryForList("SELECT " + column + " FROM " + table + ";"));
+            queryResults.getFromResultSet(p.executeQuery());
+            connection.close();
             return queryResults;
         } catch (Throwable e) {
             throw new QueryException(e);
         }
     }
 
-    public static QueryResults dispatch(JdbcTemplate jdbcTemplate, String table, String column, String condition) throws QueryException {
-        try {
-            QueryResults queryResults = new QueryResults();
-            queryResults.getFromQuery(jdbcTemplate.queryForList("SELECT " + column + " FROM " + table + " WHERE " + condition + ";"));
-            return queryResults;
-        } catch (Throwable e) {
-            throw new QueryException(e);
-        }
-    }
-
-    public static SecUserDetails getSecUserDetails(JdbcTemplate jdbcTemplate, int id) throws QueryException {
-        QueryResults queryResults = dispatch(jdbcTemplate, "personnel", "*", "id = " + id);
+    public SecUserDetails getSecUserDetails(int id) throws QueryException {
+        String sql = String.format("SELECT * FROM personnel WHERE id = %d", id);
+        String[] params = {};
+        QueryResults queryResults = dispatch(sql, params);
         return new SecUserDetails(queryResults.getFirstResult());
     }
 
-    public static int getIdUsername(JdbcTemplate jdbcTemplate, String username) throws QueryException {
-        QueryResults queryResults = dispatch(jdbcTemplate, "personnel", "id", "username = " + "\'" + username + "\'");
+    public int getIdUsername(String username) throws QueryException {
+        String sql = "SELECT id FROM personnel WHERE username = ?";
+        String[] params = {username};
+        QueryResults queryResults = dispatch(sql, params);
         String result = queryResults.getResultsAsString();
 
         if(result == "") {
@@ -52,9 +69,12 @@ public class QueryDispatcher {
         return Integer.parseInt(result);
     }
 
-    public static Boolean checkPasswordValid(JdbcTemplate jdbcTemplate, int id, String password) throws QueryException {
+    public Boolean checkPasswordValid(int id, String password) throws QueryException {
         int result = -1;
-        QueryResults queryResults = dispatch(jdbcTemplate, "personnel", "COUNT(*)", "id = "  + id  + " AND password = " + "\'" + password + "\'");
+        String hashedPassword = DigestUtils.md5DigestAsHex(password.getBytes()).toUpperCase();
+        String sql = String.format("SELECT COUNT(*) FROM personnel WHERE id = %d AND password = ?", id);
+        String[] params = {hashedPassword};
+        QueryResults queryResults = dispatch(sql, params);
 
         result = Integer.parseInt(queryResults.getResultsAsString());
 

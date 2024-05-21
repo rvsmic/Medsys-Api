@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.*;
 public class LoginController {
 
     @Autowired
-    JdbcTemplate jdbcTemplate;
+    QueryDispatcher queryDispatcher;
+
     @Autowired
     SecUserDetailsService secUserDetailsService;
 
@@ -40,10 +41,10 @@ public class LoginController {
             username = (String) jsonData.get("username");
             password = (String) jsonData.get("password");
 
-            id = QueryDispatcher.getIdUsername(jdbcTemplate, username);
+            id = queryDispatcher.getIdUsername(username);
 
-            if (QueryDispatcher.checkPasswordValid(jdbcTemplate, id, password)) {
-                return new BasicResponse(200, "Login successful.", secUserDetailsService.createUser(QueryDispatcher.getSecUserDetails(jdbcTemplate, id))).generateResponse();
+            if (queryDispatcher.checkPasswordValid(id, password)) {
+                return new BasicResponse(200, "Login successful.", secUserDetailsService.createUser(queryDispatcher.getSecUserDetails(id))).generateResponse();
             }
         } catch (QueryException e) {
             return ErrorResponseHandler.generateErrorResponse(e.getStatus(), e);

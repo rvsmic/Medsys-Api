@@ -25,7 +25,7 @@ public class SecUserToken {
     }
 
     private String generateTokenValue() {
-        byte[] randomBytes = new byte[32];
+        byte[] randomBytes = new byte[24];
         secureRandom.nextBytes(randomBytes);
         return base64Encoder.encodeToString(randomBytes);
     }

@@ -1,6 +1,9 @@
 package com.medsys.medsysapi.db;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,8 +14,19 @@ public class QueryResults {
         this.results = new ArrayList<>();
     }
 
-    public void getFromQuery(List<Map<String, Object>> r) {
+    public void getFromList(List<Map<String, Object>> r) {
         this.results = r;
+    }
+
+    public void getFromResultSet(ResultSet rs) throws SQLException {
+
+        while (rs.next()) {
+            Map<String, Object> row = new HashMap<>();
+            for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
+                row.put(rs.getMetaData().getColumnName(i), rs.getObject(i));
+            }
+            results.add(row);
+        }
     }
 
     public List<Map<String, Object>> getResults() {

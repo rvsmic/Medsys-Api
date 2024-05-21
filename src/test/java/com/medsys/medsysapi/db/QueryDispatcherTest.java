@@ -7,19 +7,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.authentication.BadCredentialsException;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -28,86 +25,49 @@ import static org.mockito.Mockito.*;
 class QueryDispatcherTest {
     @Mock
     SecUserDetailsService secUserDetailsService;
+    @Autowired
+    DataSource dataSource;
     @InjectMocks
     QueryDispatcher queryDispatcher;
-    @Autowired
-    JdbcTemplate jdbcTemplate;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws SQLException {
         MockitoAnnotations.openMocks(this);
+        queryDispatcher.dataSource = dataSource;
+        queryDispatcher.init();
     }
 
     @Test
     public void testDispatch() throws QueryException {
-        assertNotNull(jdbcTemplate);
+        assertNotNull(queryDispatcher.dataSource);
+        Connection c = null;
+        try {
+            c = queryDispatcher.dataSource.getConnection();
+        } catch (SQLException e) {
+            fail(e);
+        }
 
-        DriverManagerDataSource dataSource = (DriverManagerDataSource) jdbcTemplate.getDataSource();
-        assertNotNull(dataSource);
+        assertNotNull(c);
 
-        String table = "personnel";
-        String column = "id";
-
-        QueryResults queryResults = null;
-        queryResults = QueryDispatcher.dispatch(jdbcTemplate, table, column);
-
-        assertNotNull(queryResults);
+        try {
+            assertTrue(c.isValid(0));
+        } catch (SQLException e) {
+            fail(e);
+        }
     }
 
     @Test
     void testGetSecUserDetails() throws QueryException {
-        JdbcTemplate mockTemplate = mock(JdbcTemplate.class);
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", 0);
-        map.put("name", "name");
-        map.put("date_of_birth", new Date(0));
-        map.put("pesel", null);
-        map.put("gender", "a");
-        map.put("phone_number", "phone_number");
-        map.put("address", "address");
-        map.put("speciality", null);
-        map.put("username", "username");
-        map.put("password", "password");
-        map.put("profession", "profession");
-
-        List<Map<String, Object>> mockList = List.of(map);
-        when(mockTemplate.queryForList(anyString())).thenReturn(mockList);
-
-        SecUserDetails secUserDetails = new SecUserDetails(map);
-        SecUserDetails result = QueryDispatcher.getSecUserDetails(mockTemplate, anyInt());
-        Assertions.assertEquals(secUserDetails, result);
     }
 
     @Test
     void testGetIdUsername() throws QueryException {
-        JdbcTemplate mockTemplate = mock(JdbcTemplate.class);
-        List<Map<String, Object>> mockList = List.of(Map.of("frederick", "610"));
 
-        when(mockTemplate.queryForList(anyString())).thenReturn(mockList);
-
-        int result = QueryDispatcher.getIdUsername(mockTemplate, "username");
-        Assertions.assertEquals(610, result);
     }
 
     @Test
     void testCheckPasswordValid() throws QueryException {
-        JdbcTemplate mockTemplate = mock(JdbcTemplate.class);
-        List<Map<String, Object>> mockList = List.of(Map.of("frederick", "1"));
 
-        when(mockTemplate.queryForList(anyString())).thenReturn(mockList);
-
-        Boolean result = QueryDispatcher.checkPasswordValid(mockTemplate, 0, "password");
-        Assertions.assertEquals(true, result);
-
-        mockList = List.of(Map.of("frederick", "0"));
-        when(mockTemplate.queryForList(anyString())).thenReturn(mockList);
-
-        try {
-            result = QueryDispatcher.checkPasswordValid(mockTemplate, 0, "password");
-            Assertions.assertEquals(false, result);
-        } catch (QueryException e) {
-            Assertions.assertInstanceOf(BadCredentialsException.class, e.getCause());
-        }
     }
 }

@@ -11,9 +11,9 @@ import java.util.Map;
 
 @Data
 @AllArgsConstructor
-public class SecUserDetails {
+public final class SecUserDetails {
 
-    static Logger logger = LoggerFactory.getLogger(SecUserDetails.class);
+    private final Logger logger = LoggerFactory.getLogger(SecUserDetails.class);
 
     private final int id;
     private final String name;

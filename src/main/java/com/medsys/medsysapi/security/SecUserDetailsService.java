@@ -1,7 +1,7 @@
 package com.medsys.medsysapi.security;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -11,23 +11,10 @@ import java.util.*;
 @Service
 public class SecUserDetailsService {
 
-    protected final Log logger = LogFactory.getLog(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(SecUserDetails.class);
     public final Map<String, SecUser> tokens = new HashMap<>();
 
     public SecUserDetailsService() {
-    }
-
-    public SecUserDetailsService(Collection<SecUser> users) {
-        for (SecUser user : users) {
-            this.createUser(user);
-        }
-    }
-
-    public SecUserToken createUser(SecUser user) {
-        logger.debug("Creating user: " + user.getUserDetails().getName());
-        checkForDuplicates(user.getUserDetails().getId());
-        this.tokens.put(user.getToken().getValue(), user);
-        return user.getToken();
     }
 
     public SecUserToken createUser(SecUserDetails userDetails) {
@@ -37,27 +24,26 @@ public class SecUserDetailsService {
         SecUser user = new SecUser(userDetails, resolveAuthorities(userDetails));
         this.tokens.put(user.getToken().getValue(), user);
 
-        logger.debug("User created: " + user.getUserDetails().getName() + "\nUserDetails:\n" + user.getUserDetails().toString());
         logger.info("User " + user.getUserDetails().getUsername() + " logged in.");
 
         return user.getToken();
+    }
+
+    public void deleteUser(String token) {
+        this.tokens.remove(token);
     }
 
     public void deleteUser(SecUser user) {
         this.tokens.remove(user.getToken().getValue());
     }
 
-    public boolean userExists(SecUser user) {
-        return this.tokens.containsKey(user.getToken().getValue());
-    }
-
-    public boolean userExists(int id) {
+    public String findUserToken(int id){
         for (Map.Entry<String, SecUser> entry : this.tokens.entrySet()) {
             if (entry.getValue().getUserDetails().getId() == id) {
-                return true;
+                return entry.getKey();
             }
         }
-        return false;
+        return "";
     }
 
     public SecUser loadUserByToken(String token) throws UsernameNotFoundException {
@@ -90,17 +76,16 @@ public class SecUserDetailsService {
             logger.debug("Checking token of user: " + entry.getValue().getUserDetails().getUsername());
             if (entry.getValue().getToken().isExpired()) {
                 deleteUser(entry.getValue());
-                logger.debug("Deleted expired token of user: " + entry.getValue().getUserDetails().getUsername());
+                logger.info("Deleted expired token of user: " + entry.getValue().getUserDetails().getUsername());
             }
         }
     }
 
     private void checkForDuplicates(int id){
-        for (Map.Entry<String, SecUser> entry : this.tokens.entrySet()) {
-            if (entry.getValue().getUserDetails().getId() == id) {
-                deleteUser(entry.getValue());
-                logger.warn("Deleted duplicate user with id: " + id);
-            }
+        String token = findUserToken(id);
+        if(!token.isEmpty()){
+            deleteUser(token);
+            logger.warn("Deleted duplicate user with id: " + id);
         }
     }
 }
