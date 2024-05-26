@@ -1,10 +1,46 @@
-server:
-  port: 8080
+spring:
+  main:
+    banner-mode: "off"
+  datasource:
+    url: "jdbc:postgresql://medsys-db-medsys-project.b.aivencloud.com:20787/defaultdb?ssl=require"
+    username: "avnadmin"
+    password: "AVNS_60UPLFw45ndL-ubmNX4"
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
+
+  # disable spring security auto configuration
+  autoconfigure:
+    exclude: >
+      org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration,
+      org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
+
+---
 
 spring:
-    datasource:
-        url: "jdbc:postgresql://eof.h.filess.io:5432/MedsysDB_friendlywe"
-        username: "MedsysDB_friendlywe"
-        password: "e77b3518b9a9a6b816ba0a840aa3f9f6f2be93fd"
-        driver-class-name: org.postgresql.Driver
+  config:
+    activate:
+      on-profile: dev
 
+logging:
+  config: classpath:logback-dev.xml
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: test
+
+logging:
+    config: classpath:logback-test.xml
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+logging:
+    config: classpath:logback-prod.xml
