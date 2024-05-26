@@ -21,16 +21,8 @@ ext {
 	set('springCloudAzureVersion', "5.10.0")
 	appNameTest = 'testmedsysapi'
 	appNameProd = 'medsysapi'
-}
-
-task bootWarTest(type: War) {
-	archiveFileName = 'app.war'
-	azurewebapp.appName = appNameTest
-}
-
-task bootWarProd(type: War) {
-	archiveFileName = 'app.war'
-	azurewebapp.appName = appNameProd
+	profile = System.getProperty('spring.profiles.active', 'dev')
+	println "Profile: " + profile
 }
 
 azurewebapp {
@@ -54,9 +46,18 @@ azurewebapp {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.azure.spring:spring-cloud-azure-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'ch.qos.logback:logback-core'
+	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
 dependencyManagement {
@@ -65,10 +66,52 @@ dependencyManagement {
 	}
 }
 
+test {
+	useJUnitPlatform()
+}
+
+tasks.bootRun {
+	if (profile == 'dev') {
+		systemProperty 'spring.profiles.active', 'dev'
+	} else
+	if (profile == 'test') {
+		systemProperty 'spring.profiles.active', 'test'
+	} else
+	if (profile == 'prod') {
+		systemProperty 'spring.profiles.active', 'prod'
+	} else {
+		throw new GradleException("Invalid spring.profiles.active value provided. %s".formatted(profile))
+	}
+}
+
 tasks.bootWar {
 	archiveFileName = 'app.war'
+
+	if (profile == 'dev') {
+		azurewebapp.appName = 'devapp'
+	} else
+	if (profile == 'test') {
+		azurewebapp.appName = appNameTest
+	} else
+	if (profile == 'prod') {
+		azurewebapp.appName = appNameProd
+	} else {
+		throw new GradleException("Invalid spring.profiles.active value provided. %s".formatted(profile))
+	}
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+
+	if (profile == 'dev') {
+		systemProperty 'spring.profiles.active', 'dev'
+	} else
+	if (profile == 'test') {
+		systemProperty 'spring.profiles.active', 'test'
+	} else
+	if (profile == 'prod') {
+		systemProperty 'spring.profiles.active', 'prod'
+	} else {
+		throw new GradleException("Invalid spring.profiles.active value provided. %s".formatted(profile))
+	}
 }

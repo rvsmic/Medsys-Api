@@ -1,0 +1,46 @@
+spring:
+  main:
+    banner-mode: "off"
+  datasource:
+    url: "jdbc:postgresql://medsys-db-medsys-project.b.aivencloud.com:20787/defaultdb?ssl=require"
+    username: "avnadmin"
+    password: "AVNS_60UPLFw45ndL-ubmNX4"
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
+
+  # disable spring security auto configuration
+  autoconfigure:
+    exclude: >
+      org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration,
+      org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+logging:
+  config: classpath:logback-dev.xml
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: test
+
+logging:
+    config: classpath:logback-test.xml
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+logging:
+    config: classpath:logback-prod.xml
