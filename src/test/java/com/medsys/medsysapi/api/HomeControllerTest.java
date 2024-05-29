@@ -4,10 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class QueryControllerTest {
+class HomeControllerTest {
 
     @Test
-    void testQuery() {
-        // kontroler do zmiany - bez testow
+    void testStats() {
     }
 }

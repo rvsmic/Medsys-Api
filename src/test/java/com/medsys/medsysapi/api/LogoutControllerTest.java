@@ -8,9 +8,5 @@ class LogoutControllerTest {
 
     @Test
     void testLogout() {
-        /*
-        TODO: testy
-        do ustalenia czy potrzebne
-         */
     }
 }

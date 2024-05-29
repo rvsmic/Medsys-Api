@@ -7,7 +7,6 @@ import net.minidev.json.JSONObject;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 public class LogoutController {
 
-    @Autowired
-    JdbcTemplate jdbcTemplate;
     @Autowired
     SecUserDetailsService secUserDetailsService;
 

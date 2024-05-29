@@ -5,10 +5,12 @@ import net.minidev.json.JSONValue;
 import net.minidev.json.parser.ParseException;
 import org.apache.coyote.BadRequestException;
 
-import java.util.List;
-import java.util.Map;
+public class JsonHandler {
 
-public abstract class JsonHandler {
+    private JsonHandler() {
+        throw new RuntimeException("Utility class");
+    }
+
     public static JSONObject readJsonData(String data) throws BadRequestException {
         JSONObject jsonData = new JSONObject();
         try {
@@ -18,12 +20,5 @@ public abstract class JsonHandler {
         }
 
         return jsonData;
-    }
-
-    public static JSONObject writeQueryAsJSONObject(List<Map<String, Object>> data) {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("query", data);
-
-        return jsonObject;
     }
 }

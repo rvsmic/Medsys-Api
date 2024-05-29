@@ -1,40 +1,25 @@
 package com.medsys.medsysapi.db;
 
-import com.medsys.medsysapi.security.SecUserDetails;
-import com.medsys.medsysapi.security.SecUserDetailsService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.util.DigestUtils;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class QueryDispatcherTest {
-    @Mock
-    SecUserDetailsService secUserDetailsService;
-    @Autowired
-    DataSource dataSource;
     @InjectMocks
     QueryDispatcher queryDispatcher;
 
     @BeforeEach
     void setUp() throws SQLException {
         MockitoAnnotations.openMocks(this);
-        queryDispatcher.dataSource = dataSource;
-        queryDispatcher.init();
     }
 
     @Test
@@ -68,6 +53,8 @@ class QueryDispatcherTest {
 
     @Test
     void testCheckPasswordValid() throws QueryException {
-
+        String password = "test123";
+        String hashedPassword = DigestUtils.md5DigestAsHex(password.getBytes()).toUpperCase();
+        System.out.println(hashedPassword);
     }
 }

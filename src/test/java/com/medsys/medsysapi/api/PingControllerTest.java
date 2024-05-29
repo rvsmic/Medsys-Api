@@ -8,6 +8,5 @@ class PingControllerTest {
 
     @Test
     void testPing() {
-        // kontroler do zmiany - bez testow
     }
 }

@@ -27,8 +27,6 @@ public class LoginController {
     public ResponseEntity login(@RequestBody(required = true) String data) {
         int id = -1;
 
-        String queryResult = "";
-
         JSONObject jsonData = null;
         String username = "";
         String password = "";

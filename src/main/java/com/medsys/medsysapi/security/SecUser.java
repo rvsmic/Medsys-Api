@@ -19,4 +19,16 @@ public class SecUser {
         this.authorities = (Set<GrantedAuthority>) authorities;
     }
 
+    public boolean hasAuthority(String authority) {
+        Set<GrantedAuthority> authorities = getAuthorities();
+
+        for (GrantedAuthority grantedAuthority : authorities) {
+            if (authority.equals(grantedAuthority.getAuthority())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }

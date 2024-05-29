@@ -4,10 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class IndexControllerTest {
+class InfoControllerTest {
 
     @Test
-    void testIndex() {
-        // kontroler do zmiany - bez testow
+    void testUser() {
     }
 }

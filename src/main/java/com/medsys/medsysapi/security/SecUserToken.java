@@ -21,7 +21,7 @@ public class SecUserToken {
 
     public SecUserToken(@Nullable Date expirationDate) {
         this.value = generateTokenValue();
-        this.expirationDate = expirationDate == null ? new Date(System.currentTimeMillis() + 1000 * 60 * 2) : expirationDate;
+        this.expirationDate = expirationDate == null ? new Date(System.currentTimeMillis() + 1000 * 60 * 30) : expirationDate;
     }
 
     private String generateTokenValue() {
@@ -42,5 +42,9 @@ public class SecUserToken {
     @JsonProperty("token")
     public String getValue() {
         return value;
+    }
+
+    public void refreshToken() {
+        this.expirationDate = new Date(System.currentTimeMillis() + 1000 * 60 * 30);
     }
 }

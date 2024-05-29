@@ -32,7 +32,6 @@ public class ErrorResponseHandler {
     }
 
     public static ResponseEntity generateErrorResponse(int status, Exception e) {
-        String message;
         return new BasicResponse(status, e.getMessage()).generateResponse();
     }
 }

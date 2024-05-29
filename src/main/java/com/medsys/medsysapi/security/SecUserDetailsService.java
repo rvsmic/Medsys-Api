@@ -12,6 +12,7 @@ import java.util.*;
 public class SecUserDetailsService {
 
     private final Logger logger = LoggerFactory.getLogger(SecUserDetails.class);
+
     public final Map<String, SecUser> tokens = new HashMap<>();
 
     public SecUserDetailsService() {
@@ -54,11 +55,11 @@ public class SecUserDetailsService {
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
         authorities.add(new SimpleGrantedAuthority(SecUserRoles.ROLE_USER));
         switch(userDetails.getProfession()) {
-            case "Doctor": {
+            case "Lekarz": {
                 authorities.add(new SimpleGrantedAuthority(SecUserRoles.ROLE_DOCTOR));
                 break;
             }
-            case "Personnel": {
+            case "Personel": {
                 authorities.add(new SimpleGrantedAuthority(SecUserRoles.ROLE_PERSONNEL));
                 break;
             }
