@@ -8,7 +8,7 @@ import com.medsys.medsysapi.utils.BasicResponse;
 import com.medsys.medsysapi.utils.ErrorResponseHandler;
 import com.medsys.medsysapi.utils.JsonHandler;
 import net.minidev.json.JSONObject;
-import org.apache.coyote.BadRequestException;
+import net.minidev.json.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -42,7 +42,7 @@ public class HomeController {
             jsonData = JsonHandler.readJsonData(body);
             token = (String) jsonData.get("token");
             if (token == null) {
-                return ErrorResponseHandler.generateErrorResponse(400, new BadRequestException("Could not find token in request body."));
+                return ErrorResponseHandler.generateErrorResponse(400, new Exception("Could not find token in request body."));
             }
 
             user = secUserDetailsService.loadUserByToken(token);
@@ -64,7 +64,7 @@ public class HomeController {
 
             return new BasicResponse(200, "OK", responseData).generateResponse();
 
-        } catch (BadRequestException e) {
+        } catch (ParseException e) {
             return ErrorResponseHandler.generateErrorResponse(400, e);
         }
     }

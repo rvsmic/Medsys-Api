@@ -1,6 +1,5 @@
 package com.medsys.medsysapi.api;
 
-import com.medsys.medsysapi.db.QueryDispatcher;
 import com.medsys.medsysapi.security.SecUser;
 import com.medsys.medsysapi.security.SecUserDetailsService;
 import com.medsys.medsysapi.security.SecUserRoles;
@@ -8,7 +7,7 @@ import com.medsys.medsysapi.service.user.UserService;
 import com.medsys.medsysapi.utils.ErrorResponseHandler;
 import com.medsys.medsysapi.utils.JsonHandler;
 import net.minidev.json.JSONObject;
-import org.apache.coyote.BadRequestException;
+import net.minidev.json.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -37,7 +36,7 @@ public class InfoController {
             jsonData = JsonHandler.readJsonData(body);
             token = (String) jsonData.get("token");
             if (token == null) {
-                return ErrorResponseHandler.generateErrorResponse(400, new BadRequestException("Could not find token in request body."));
+                return ErrorResponseHandler.generateErrorResponse(400, new Exception("Could not find token in request body."));
             }
 
             user = secUserDetailsService.loadUserByToken(token);
@@ -54,7 +53,7 @@ public class InfoController {
 
             return userService.userInfo(id);
 
-        } catch (BadRequestException e) {
+        } catch (ParseException e) {
             return ErrorResponseHandler.generateErrorResponse(400, e);
         }
     }

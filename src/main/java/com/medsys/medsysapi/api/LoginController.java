@@ -7,7 +7,7 @@ import com.medsys.medsysapi.utils.BasicResponse;
 import com.medsys.medsysapi.utils.ErrorResponseHandler;
 import com.medsys.medsysapi.utils.JsonHandler;
 import net.minidev.json.JSONObject;
-import org.apache.coyote.BadRequestException;
+import net.minidev.json.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +45,7 @@ public class LoginController {
             }
         } catch (QueryException e) {
             return ErrorResponseHandler.generateErrorResponse(e.getStatus(), e);
-        } catch (BadRequestException e) {
+        } catch (ParseException e) {
             return ErrorResponseHandler.generateErrorResponse(400, e);
         }
 
