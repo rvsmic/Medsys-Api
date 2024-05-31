@@ -53,18 +53,18 @@ public class SecUserDetailsService {
 
     private Set<SimpleGrantedAuthority> resolveAuthorities(SecUserDetails userDetails){
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority(SecUserRoles.ROLE_USER));
+        authorities.add(new SimpleGrantedAuthority(SecUserRoles.ROLE_USER.toString()));
         switch(userDetails.getProfession()) {
             case "Lekarz": {
-                authorities.add(new SimpleGrantedAuthority(SecUserRoles.ROLE_DOCTOR));
+                authorities.add(new SimpleGrantedAuthority(SecUserRoles.ROLE_DOCTOR.toString()));
                 break;
             }
             case "Personel": {
-                authorities.add(new SimpleGrantedAuthority(SecUserRoles.ROLE_PERSONNEL));
+                authorities.add(new SimpleGrantedAuthority(SecUserRoles.ROLE_PERSONNEL.toString()));
                 break;
             }
             case "Admin": {
-                authorities.add(new SimpleGrantedAuthority(SecUserRoles.ROLE_ADMIN));
+                authorities.add(new SimpleGrantedAuthority(SecUserRoles.ROLE_ADMIN.toString()));
                 break;
             }
         }

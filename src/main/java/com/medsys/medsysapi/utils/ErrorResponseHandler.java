@@ -4,6 +4,7 @@ import com.medsys.medsysapi.db.QueryException;
 import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -32,8 +33,15 @@ public class ErrorResponseHandler {
         return generateErrorResponse(405, e);
     }
 
+    public ResponseEntity badRequestHandler(Exception e) {
+        return generateErrorResponse(400, e);
+    }
+
     @ExceptionHandler({Throwable.class})
     public ResponseEntity otherExceptionHandler(Throwable e) {
+        if(e instanceof MissingRequestHeaderException) {
+            return badRequestHandler((MissingRequestHeaderException) e);
+        }
         if(e instanceof QueryException) {
             return queryExceptionHandler((QueryException) e);
         }

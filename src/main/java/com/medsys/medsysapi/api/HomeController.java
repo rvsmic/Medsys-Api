@@ -31,41 +31,33 @@ public class HomeController {
     StatsService statsService;
 
     @GetMapping("/home/stats")
-    public ResponseEntity user(@RequestBody String body) {
+    public ResponseEntity user(@RequestHeader String token) {
 
         JSONObject jsonData = null;
         SecUser user = null;
-        String token = "";
         Map<String, Object> responseData = new HashMap<>();
 
-        try {
-            jsonData = JsonHandler.readJsonData(body);
-            token = (String) jsonData.get("token");
-            if (token == null) {
-                return ErrorResponseHandler.generateErrorResponse(400, new Exception("Could not find token in request body."));
-            }
-
-            user = secUserDetailsService.loadUserByToken(token);
-
-            if (user == null) {
-                return ErrorResponseHandler.generateErrorResponse(401, new BadCredentialsException("Invalid or expired token."));
-            }
-            if (!user.hasAuthority(SecUserRoles.ROLE_USER)) {
-                return ErrorResponseHandler.generateErrorResponse(403, new AccessDeniedException("User does not have permission to access this resource."));
-            }
-
-            user.getToken().refreshToken();
-
-
-            List<Map<String, Object>> responseDataDay = statsService.getUserDailyStatisticsLabeled(user.getUserDetails().getId());
-            List<Map<String, Object>> responseDataWeek = statsService.getUserWeeklyStatisticsLabeled(user.getUserDetails().getId());
-            responseData.put("daily", responseDataDay);
-            responseData.put("weekly", responseDataWeek);
-
-            return new BasicResponse(200, "OK", responseData).generateResponse();
-
-        } catch (ParseException e) {
-            return ErrorResponseHandler.generateErrorResponse(400, e);
+        if (token == null) {
+            return ErrorResponseHandler.generateErrorResponse(400, new Exception("Could not find token in request body."));
         }
+
+        user = secUserDetailsService.loadUserByToken(token);
+
+        if (user == null) {
+            return ErrorResponseHandler.generateErrorResponse(401, new BadCredentialsException("Invalid or expired token."));
+        }
+        if (!user.hasAuthority(SecUserRoles.ROLE_USER.toString())) {
+            return ErrorResponseHandler.generateErrorResponse(403, new AccessDeniedException("User does not have permission to access this resource."));
+        }
+
+        user.getToken().refreshToken();
+
+
+        List<Map<String, Object>> responseDataDay = statsService.getUserDailyStatisticsLabeled(user.getUserDetails().getId());
+        List<Map<String, Object>> responseDataWeek = statsService.getUserWeeklyStatisticsLabeled(user.getUserDetails().getId());
+        responseData.put("daily", responseDataDay);
+        responseData.put("weekly", responseDataWeek);
+
+        return new BasicResponse(200, "OK", responseData).generateResponse();
     }
 }
