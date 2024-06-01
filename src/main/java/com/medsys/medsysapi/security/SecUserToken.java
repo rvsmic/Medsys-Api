@@ -21,6 +21,10 @@ public class SecUserToken {
     private static final SecureRandom secureRandom = new SecureRandom();
     private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder();
 
+    public SecUserToken() {
+        this(0, null);
+    }
+
     public SecUserToken(int role_id, @Nullable Date expirationDate) {
         this.role_id = role_id;
         this.value = generateTokenValue();

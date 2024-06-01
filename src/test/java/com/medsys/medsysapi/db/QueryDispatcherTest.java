@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.DigestUtils;
 
@@ -14,16 +15,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class QueryDispatcherTest {
-    @InjectMocks
+    @Autowired
     QueryDispatcher queryDispatcher;
 
     @BeforeEach
-    void setUp() throws SQLException {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testDispatch() throws QueryException {
+    public void testDispatch() {
         assertNotNull(queryDispatcher.dataSource);
         Connection c = null;
         try {
@@ -42,19 +43,17 @@ class QueryDispatcherTest {
     }
 
     @Test
-    void testGetSecUserDetails() throws QueryException {
+    void testGetSecUserDetails() {
 
     }
 
     @Test
-    void testGetIdUsername() throws QueryException {
+    void testGetIdUsername() {
 
     }
 
     @Test
-    void testCheckPasswordValid() throws QueryException {
-        String password = "test123";
-        String hashedPassword = DigestUtils.md5DigestAsHex(password.getBytes()).toUpperCase();
-        System.out.println(hashedPassword);
+    void testCheckPasswordValid() {
+
     }
 }

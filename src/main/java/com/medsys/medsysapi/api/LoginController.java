@@ -33,10 +33,18 @@ public class LoginController {
 
 
         try {
+            if(data == null) {
+                return ErrorResponseHandler.generateErrorResponse(400, new Exception("Could not find data in request body."));
+            }
+
             jsonData = JsonHandler.readJsonData(data);
 
             username = (String) jsonData.get("username");
             password = (String) jsonData.get("password");
+
+            if(username == null || password == null) {
+                return ErrorResponseHandler.generateErrorResponse(400, new Exception("Could not find username or password in request body."));
+            }
 
             id = queryDispatcher.getIdUsername(username);
 

@@ -3,6 +3,7 @@ package com.medsys.medsysapi.utils;
 import com.medsys.medsysapi.db.QueryException;
 import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -41,6 +42,9 @@ public class ErrorResponseHandler {
     public ResponseEntity otherExceptionHandler(Throwable e) {
         if(e instanceof MissingRequestHeaderException) {
             return badRequestHandler((MissingRequestHeaderException) e);
+        }
+        if(e instanceof HttpMessageNotReadableException) {
+            return badRequestHandler((HttpMessageNotReadableException) e);
         }
         if(e instanceof QueryException) {
             return queryExceptionHandler((QueryException) e);
