@@ -26,7 +26,6 @@ public class InfoController {
     @GetMapping("/info/user")
     public ResponseEntity user(@RequestParam(value = "id", required = false) Integer id, @RequestHeader String token) {
 
-        JSONObject jsonData = null;
         SecUser user = null;
 
         if (token == null) {

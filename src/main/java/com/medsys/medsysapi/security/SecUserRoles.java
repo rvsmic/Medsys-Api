@@ -8,9 +8,9 @@ public enum SecUserRoles {
     //id : 1
     ROLE_USER("ROLE_USER"),
     //id : 2
-    ROLE_PERSONNEL("ROLE_PERSONNEL"),
-    //id : 3
     ROLE_DOCTOR("ROLE_DOCTOR"),
+    //id : 3
+    ROLE_PERSONNEL("ROLE_PERSONNEL"),
     //id : 4
     ROLE_ADMIN("ROLE_ADMIN");
 
@@ -27,9 +27,9 @@ public enum SecUserRoles {
 
     public static int getId(String role) {
         switch (role) {
-            case "ROLE_PERSONNEL":
-                return 2;
             case "ROLE_DOCTOR":
+                return 2;
+            case "ROLE_PERSONNEL":
                 return 3;
             case "ROLE_ADMIN":
                 return 4;

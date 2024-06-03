@@ -16,10 +16,20 @@ public class LabTest {
     public String test_result;
 
     public LabTest(Map<String, Object> data) {
-        this.id = (int) data.get("id");
-        this.patient_id = (int) data.get("patient_id");
-        this.test_date = (Date) data.get("test_date");
-        this.test_type = (String) data.get("test_type");
-        this.test_result = (String) data.get("test_result");
+        if(data.containsKey("id")) {
+            this.id = (int) data.get("id");
+        }
+        if(data.containsKey("patient_id")) {
+            this.patient_id = (int) data.get("patient_id");
+        }
+        if(data.containsKey("test_date")) {
+            this.test_date = (Date) data.get("test_date");
+        }
+        if(data.containsKey("test_type")) {
+            this.test_type = (String) data.get("test_type");
+        }
+        if(data.containsKey("test_result")) {
+            this.test_result = (String) data.get("test_result");
+        }
     }
 }

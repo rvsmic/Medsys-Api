@@ -45,6 +45,22 @@ public class QueryDispatcher {
         }
     }
 
+    public boolean dispatchUpdate(String sql, Object[] params) throws QueryException {
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement p = connection.prepareStatement(sql);
+
+            for (int i = 0; i < params.length; i++) {
+                p.setObject(i + 1, params[i]);
+            }
+            p.executeUpdate();
+            connection.close();
+            return true;
+        } catch (Throwable e) {
+            throw new QueryException(e);
+        }
+    }
+
     public SecUserDetails getSecUserDetails(int id) throws QueryException {
         String sql = String.format("SELECT * FROM personnel WHERE id = %d", id);
         String[] params = {};
