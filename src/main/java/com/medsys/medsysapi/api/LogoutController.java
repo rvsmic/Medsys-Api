@@ -4,10 +4,9 @@ import com.medsys.medsysapi.security.SecUserDetailsService;
 import com.medsys.medsysapi.utils.BasicResponse;
 import com.medsys.medsysapi.utils.JsonHandler;
 import net.minidev.json.JSONObject;
-import org.apache.coyote.BadRequestException;
+import net.minidev.json.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 public class LogoutController {
 
-    @Autowired
-    JdbcTemplate jdbcTemplate;
     @Autowired
     SecUserDetailsService secUserDetailsService;
 
@@ -30,8 +27,8 @@ public class LogoutController {
             token = (String) jsonData.get("token");
             secUserDetailsService.deleteUser(token);
             return new BasicResponse(200, "Logout successful.").generateResponse();
-        } catch (BadRequestException e) {
-            throw new RuntimeException(e);
+        } catch (ParseException e) {
+            return new BasicResponse(400, e.getMessage()).generateResponse();
         }
     }
 }

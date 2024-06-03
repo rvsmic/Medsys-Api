@@ -1,6 +1,7 @@
 package com.medsys.medsysapi.api;
 
-import org.springframework.boot.SpringApplication;
+import com.medsys.medsysapi.utils.BasicResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,9 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin
 public class PingController {
     @GetMapping
-    public String ping() {
-        // get active profile
-        String profile = SpringApplication.run(PingController.class).getEnvironment().getActiveProfiles()[0];
-        return "Active profile: " + profile;
+    public ResponseEntity ping() {
+        return new BasicResponse(200, "Pong!").generateResponse();
     }
 }

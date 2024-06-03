@@ -20,21 +20,21 @@ public class QueryDispatcher {
 
     private final Logger logger = LoggerFactory.getLogger(QueryDispatcher.class);
 
-    @Autowired
-    DataSource dataSource;
-
+    final DataSource dataSource;
     protected Connection connection;
 
-    public QueryDispatcher() {
+    @Autowired
+    public QueryDispatcher(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
-    public QueryResults dispatch(String sql, String[] params) throws QueryException {
+    public QueryResults dispatch(String sql, Object[] params) throws QueryException {
         try {
             connection = dataSource.getConnection();
             PreparedStatement p = connection.prepareStatement(sql);
 
             for (int i = 0; i < params.length; i++) {
-                p.setString(i + 1, params[i]);
+                p.setObject(i + 1, params[i]);
             }
             QueryResults queryResults = new QueryResults();
             queryResults.getFromResultSet(p.executeQuery());

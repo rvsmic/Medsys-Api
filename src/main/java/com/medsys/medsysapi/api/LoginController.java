@@ -7,7 +7,7 @@ import com.medsys.medsysapi.utils.BasicResponse;
 import com.medsys.medsysapi.utils.ErrorResponseHandler;
 import com.medsys.medsysapi.utils.JsonHandler;
 import net.minidev.json.JSONObject;
-import org.apache.coyote.BadRequestException;
+import net.minidev.json.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,18 +27,24 @@ public class LoginController {
     public ResponseEntity login(@RequestBody(required = true) String data) {
         int id = -1;
 
-        String queryResult = "";
-
         JSONObject jsonData = null;
         String username = "";
         String password = "";
 
 
         try {
+            if(data == null) {
+                return ErrorResponseHandler.generateErrorResponse(400, new Exception("Could not find data in request body."));
+            }
+
             jsonData = JsonHandler.readJsonData(data);
 
             username = (String) jsonData.get("username");
             password = (String) jsonData.get("password");
+
+            if(username == null || password == null) {
+                return ErrorResponseHandler.generateErrorResponse(400, new Exception("Could not find username or password in request body."));
+            }
 
             id = queryDispatcher.getIdUsername(username);
 
@@ -47,7 +53,7 @@ public class LoginController {
             }
         } catch (QueryException e) {
             return ErrorResponseHandler.generateErrorResponse(e.getStatus(), e);
-        } catch (BadRequestException e) {
+        } catch (ParseException e) {
             return ErrorResponseHandler.generateErrorResponse(400, e);
         }
 

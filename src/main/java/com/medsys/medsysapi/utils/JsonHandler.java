@@ -3,27 +3,21 @@ package com.medsys.medsysapi.utils;
 import net.minidev.json.JSONObject;
 import net.minidev.json.JSONValue;
 import net.minidev.json.parser.ParseException;
-import org.apache.coyote.BadRequestException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 
-import java.util.List;
-import java.util.Map;
+public class JsonHandler {
 
-public abstract class JsonHandler {
-    public static JSONObject readJsonData(String data) throws BadRequestException {
-        JSONObject jsonData = new JSONObject();
-        try {
-            jsonData = (JSONObject) JSONValue.parseWithException(data);
-        } catch (ParseException e) {
-            throw new BadRequestException("Invalid JSON data.");
-        }
-
-        return jsonData;
+    private JsonHandler() {
+        throw new RuntimeException("Utility class");
     }
 
-    public static JSONObject writeQueryAsJSONObject(List<Map<String, Object>> data) {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("query", data);
-
-        return jsonObject;
+    public static JSONObject readJsonData(String data) throws ParseException {
+        try {
+            JSONObject jsonData = new JSONObject();
+            jsonData = (JSONObject) JSONValue.parseWithException(data);
+            return jsonData;
+        } catch (ClassCastException e) {
+            throw new HttpMessageNotReadableException("Could not read JSON data.", e);
+        }
     }
 }

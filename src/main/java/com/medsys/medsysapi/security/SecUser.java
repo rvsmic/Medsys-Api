@@ -15,8 +15,20 @@ public class SecUser {
 
     public SecUser(SecUserDetails userDetails, Collection<? extends GrantedAuthority> authorities) {
         this.userDetails = userDetails;
-        this.token = new SecUserToken(null);
+        this.token = new SecUserToken(SecUserRoles.getId((Set<GrantedAuthority>) authorities), null);
         this.authorities = (Set<GrantedAuthority>) authorities;
+    }
+
+    public boolean hasAuthority(String authority) {
+        Set<GrantedAuthority> authorities = getAuthorities();
+
+        for (GrantedAuthority grantedAuthority : authorities) {
+            if (authority.equals(grantedAuthority.getAuthority())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }
