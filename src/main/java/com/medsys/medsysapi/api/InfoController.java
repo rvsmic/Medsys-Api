@@ -21,6 +21,9 @@ public class InfoController {
     SecUserDetailsService secUserDetailsService;
 
     @Autowired
+    ErrorResponseHandler errorResponseHandler;
+
+    @Autowired
     UserService userService;
 
     @GetMapping("/info/user")
@@ -29,16 +32,16 @@ public class InfoController {
         SecUser user = null;
 
         if (token == null) {
-            return ErrorResponseHandler.generateErrorResponse(400, new Exception("Could not find token in request body."));
+            return errorResponseHandler.generateErrorResponse(400, new Exception("Could not find token in request body."));
         }
 
         user = secUserDetailsService.loadUserByToken(token);
 
         if (user == null) {
-            return ErrorResponseHandler.generateErrorResponse(401, new BadCredentialsException("Invalid or expired token."));
+            return errorResponseHandler.generateErrorResponse(401, new BadCredentialsException("Invalid or expired token."));
         }
         if (!user.hasAuthority(SecUserRoles.ROLE_USER.toString())) {
-            return ErrorResponseHandler.generateErrorResponse(403, new AccessDeniedException("User does not have permission to access this resource."));
+            return errorResponseHandler.generateErrorResponse(403, new AccessDeniedException("User does not have permission to access this resource."));
         }
 
         user.getToken().refreshToken();

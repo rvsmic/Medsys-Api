@@ -3,22 +3,19 @@ package com.medsys.medsysapi.service.appointments;
 import com.medsys.medsysapi.db.QueryDispatcher;
 import com.medsys.medsysapi.db.QueryException;
 import com.medsys.medsysapi.model.Appointment;
-import com.medsys.medsysapi.utils.JsonHandler;
-import com.nimbusds.jose.shaded.gson.JsonObject;
-import net.minidev.json.JSONObject;
-import net.minidev.json.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Time;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Service
 public class AppointmentService {
-
     private final QueryDispatcher queryDispatcher;
     private final Logger logger = LoggerFactory.getLogger(AppointmentService.class);
 
@@ -27,30 +24,40 @@ public class AppointmentService {
         this.queryDispatcher = queryDispatcher;
     }
 
-    public List<Appointment> getAppointments() throws QueryException {
-        String sql = "SELECT * FROM appointments";
+    public List<Map<String, Object>> getAllAppointments() throws QueryException {
+        String sql = "SELECT a.id AS \"id\", a.appointment_name AS \"nazwa\", p.name AS \"pacjent\", d.name AS \"lekarz\", a.appointment_time AS \"godzina\", a.appointment_date AS \"data\", a.diagnosis AS \"diagnoza\", a.appointment_status AS \"status\" FROM appointments a JOIN patients p ON a.patient_id = p.id JOIN personnel d ON a.doctor_id = d.id;";
         Object[] params = {};
         List<Map<String, Object>> results = queryDispatcher.dispatch(sql, params).getResults();
-        List<Appointment> appointments = new ArrayList<>();
         for(Map<String, Object> result : results) {
-            appointments.add(new Appointment(result));
+            Time time = (Time) result.get("godzina");
+            String timeString = time.toString();
+            String[] timeParts = timeString.split(":");
+            String timeFormatted = timeParts[0] + ":" + timeParts[1];
+            result.put("godzina", timeFormatted);
         }
-        return appointments;
+
+        return results;
     }
 
-    public Appointment getAppointment(int id) throws QueryException {
+    public Map<String, Object> getAppointment(int id) throws QueryException, ParseException {
         String sql = "SELECT * FROM appointments WHERE id = ?";
         Object[] params = {id};
-        return new Appointment(queryDispatcher.dispatch(sql, params).getFirstResult());
+        Map<String, Object> results = queryDispatcher.dispatch(sql, params).getFirstResult();
+        Time time = (Time) results.get("appointment_time");
+        String timeString = time.toString();
+        String[] timeParts = timeString.split(":");
+        String timeFormatted = timeParts[0] + ":" + timeParts[1];
+        results.put("appointment_time", timeFormatted);
+        return results;
     }
 
     public void addAppointment(Appointment appointment) throws QueryException {
-        List<Appointment> appointments = getAppointments();
+        List<Map<String, Object>> appointments = getAllAppointments();
         int appointment_id = 1;
         while(true) {
             boolean found = false;
-            for(Appointment a : appointments) {
-                if(a.getId() == appointment_id) {
+            for(Map<String, Object> a : appointments) {
+                if((int)a.get("id") == appointment_id) {
                     found = true;
                     break;
                 }
@@ -75,5 +82,16 @@ public class AppointmentService {
         String sql = "DELETE FROM appointments WHERE id = ?";
         Object[] params = {id};
         queryDispatcher.dispatchUpdate(sql, params);
+    }
+
+    public List<Map<String, Object>> getAllAppointmentsLabeled() throws QueryException {
+        String sql = "SELECT id, appointment_name FROM appointments";
+        Object[] params = {};
+        List<Map<String, Object>> results = queryDispatcher.dispatch(sql, params).getResults();
+        List<Map<String, Object>> labeled = new ArrayList<>();
+        for (Map<String, Object> result : results) {
+            labeled.add(Map.of("value", result.get("id"), "label", result.get("appointment_name")));
+        }
+        return labeled;
     }
 }

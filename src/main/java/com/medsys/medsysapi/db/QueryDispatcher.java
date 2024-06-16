@@ -14,6 +14,7 @@ import org.springframework.util.DigestUtils;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 @Service
 public class QueryDispatcher {
@@ -41,6 +42,13 @@ public class QueryDispatcher {
             connection.close();
             return queryResults;
         } catch (Throwable e) {
+            try {
+                if(!connection.isClosed()){
+                    connection.close();
+                }
+            } catch (SQLException ex) {
+                throw new QueryException(ex);
+            }
             throw new QueryException(e);
         }
     }
@@ -57,6 +65,13 @@ public class QueryDispatcher {
             connection.close();
             return true;
         } catch (Throwable e) {
+            try {
+                if(!connection.isClosed()){
+                    connection.close();
+                }
+            } catch (SQLException ex) {
+                throw new QueryException(ex);
+            }
             throw new QueryException(e);
         }
     }

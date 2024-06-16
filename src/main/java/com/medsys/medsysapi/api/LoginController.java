@@ -21,6 +21,9 @@ public class LoginController {
     QueryDispatcher queryDispatcher;
 
     @Autowired
+    ErrorResponseHandler errorResponseHandler;
+
+    @Autowired
     SecUserDetailsService secUserDetailsService;
 
     @PostMapping
@@ -34,7 +37,7 @@ public class LoginController {
 
         try {
             if(data == null) {
-                return ErrorResponseHandler.generateErrorResponse(400, new Exception("Could not find data in request body."));
+                return errorResponseHandler.generateErrorResponse(400, new Exception("Could not find data in request body."));
             }
 
             jsonData = JsonHandler.readJsonData(data);
@@ -43,7 +46,7 @@ public class LoginController {
             password = (String) jsonData.get("password");
 
             if(username == null || password == null) {
-                return ErrorResponseHandler.generateErrorResponse(400, new Exception("Could not find username or password in request body."));
+                return errorResponseHandler.generateErrorResponse(400, new Exception("Could not find username or password in request body."));
             }
 
             id = queryDispatcher.getIdUsername(username);
@@ -52,11 +55,11 @@ public class LoginController {
                 return new BasicResponse(200, "Login successful.", secUserDetailsService.createUser(queryDispatcher.getSecUserDetails(id))).generateResponse();
             }
         } catch (QueryException e) {
-            return ErrorResponseHandler.generateErrorResponse(e.getStatus(), e);
+            return errorResponseHandler.generateErrorResponse(e.getStatus(), e);
         } catch (ParseException e) {
-            return ErrorResponseHandler.generateErrorResponse(400, e);
+            return errorResponseHandler.generateErrorResponse(400, e);
         }
 
-        return ErrorResponseHandler.generateErrorResponse(500, new Exception("Unexpected error at " + this.getClass().getSimpleName() + "::login"));
+        return errorResponseHandler.generateErrorResponse(500, new Exception("Unexpected error at " + this.getClass().getSimpleName() + "::login"));
     }
 }

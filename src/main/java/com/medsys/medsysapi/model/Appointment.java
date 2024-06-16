@@ -27,7 +27,7 @@ public class Appointment {
     @Nullable
     public Date follow_up_date;
 
-    public Appointment(Map<String, Object> data) {
+    public Appointment(Map<String, Object> data) throws ParseException {
         if(data.containsKey("id")) {
             this.id = (int) data.get("id");
         }
@@ -40,25 +40,21 @@ public class Appointment {
         if(data.containsKey("appointment_date")) {
             if(data.get("appointment_date") instanceof String) {
                 DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                try {
-                    this.appointment_date = new Date(dateFormat.parse((String) data.get("appointment_date")).getTime());
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                this.appointment_date = new Date(dateFormat.parse((String) data.get("appointment_date")).getTime());
             } else {
                 this.appointment_date = (Date) data.get("appointment_date");
             }
         }
         if(data.containsKey("appointment_time")) {
+            DateFormat timeFormat = new SimpleDateFormat("HH:mm");
             if(data.get("appointment_time") instanceof String) {
-                DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
                 try {
                     this.appointment_time = new Time(timeFormat.parse((String) data.get("appointment_time")).getTime());
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
             } else {
-                this.appointment_time = (Time) data.get("appointment_time");
+                this.appointment_time = new Time(timeFormat.parse(data.get("appointment_time").toString()).getTime());
             }
         }
         if(data.containsKey("appointment_status")) {
