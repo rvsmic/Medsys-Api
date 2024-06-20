@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.sql.Date;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
 @Data
@@ -15,7 +18,7 @@ public class Prescription {
     public Date prescription_date;
     public String prescription_details;
 
-    public Prescription(Map<String, Object> data) {
+    public Prescription(Map<String, Object> data) throws ParseException {
         if(data.containsKey("id")) {
             this.id = (int) data.get("id");
         }
@@ -26,7 +29,12 @@ public class Prescription {
             this.doctor_id = (int) data.get("doctor_id");
         }
         if(data.containsKey("prescription_date")) {
-            this.prescription_date = (Date) data.get("prescription_date");
+            if(data.get("prescription_date") instanceof String) {
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                this.prescription_date = new Date(dateFormat.parse((String) data.get("prescription_date")).getTime());
+            } else {
+                this.prescription_date = (Date) data.get("prescription_date");
+            }
         }
         if(data.containsKey("prescription_details")) {
             this.prescription_details = (String) data.get("prescription_details");

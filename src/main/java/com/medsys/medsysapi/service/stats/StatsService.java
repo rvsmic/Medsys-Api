@@ -6,6 +6,7 @@ import com.medsys.medsysapi.model.Appointment;
 import com.medsys.medsysapi.model.LabTest;
 import com.medsys.medsysapi.model.Prescription;
 import com.medsys.medsysapi.utils.DataFormatUtils;
+import com.medsys.medsysapi.utils.ErrorResponseHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ public class StatsService {
     private final StatsTracker statsTracker;
     private final QueryDispatcher queryDispatcher;
     private final Logger logger = LoggerFactory.getLogger(StatsService.class);
+
+    private ErrorResponseHandler errorResponseHandler;
 
     @Autowired
     public StatsService(StatsTracker statsTracker, QueryDispatcher queryDispatcher) {
@@ -191,8 +194,13 @@ public class StatsService {
         String sql = "SELECT * FROM prescriptions WHERE doctor_id = ?";
         Object[] params = {doctorId};
 
+
         queryDispatcher.dispatch(sql, params).getResults().forEach(result -> {
-            prescriptions.add(new Prescription(result));
+            try {
+                prescriptions.add(new Prescription(result));
+            } catch (ParseException e) {
+                errorResponseHandler.otherExceptionHandler(e);
+            }
         });
 
         return prescriptions;
