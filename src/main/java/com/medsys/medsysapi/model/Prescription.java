@@ -16,10 +16,20 @@ public class Prescription {
     public String prescription_details;
 
     public Prescription(Map<String, Object> data) {
-        this.id = (int) data.get("id");
-        this.patient_id = (int) data.get("patient_id");
-        this.doctor_id = (int) data.get("doctor_id");
-        this.prescription_date = (Date) data.get("prescription_date");
-        this.prescription_details = (String) data.get("prescription_details");
+        if(data.containsKey("id")) {
+            this.id = (int) data.get("id");
+        }
+        if(data.containsKey("patient_id")) {
+            this.patient_id = (int) data.get("patient_id");
+        }
+        if(data.containsKey("doctor_id")) {
+            this.doctor_id = (int) data.get("doctor_id");
+        }
+        if(data.containsKey("prescription_date")) {
+            this.prescription_date = (Date) data.get("prescription_date");
+        }
+        if(data.containsKey("prescription_details")) {
+            this.prescription_details = (String) data.get("prescription_details");
+        }
     }
 }

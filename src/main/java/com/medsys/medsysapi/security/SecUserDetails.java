@@ -27,7 +27,6 @@ public final class SecUserDetails {
     @Nullable
     private final String speciality;
     private final String username;
-    private final String password;
     private final String profession;
 
     public SecUserDetails(Map<String, Object> data) {
@@ -40,7 +39,6 @@ public final class SecUserDetails {
         this.address = (String) data.get("address");
         this.speciality = (String) data.get("specialty");
         this.username = (String) data.get("username");
-        this.password = (String) data.get("password");
         this.profession = (String) data.get("profession");
     }
 

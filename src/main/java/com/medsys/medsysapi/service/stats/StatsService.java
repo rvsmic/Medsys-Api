@@ -5,6 +5,7 @@ import com.medsys.medsysapi.db.QueryException;
 import com.medsys.medsysapi.model.Appointment;
 import com.medsys.medsysapi.model.LabTest;
 import com.medsys.medsysapi.model.Prescription;
+import com.medsys.medsysapi.utils.DataFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -135,7 +137,7 @@ public class StatsService {
             }
             logger.info("Personnel actions updated");
 
-        } catch (QueryException e) {
+        } catch (QueryException | ParseException e) {
             logger.error("Error at StatsService::addDefinedActions: " + e.getMessage() + " caused by " + e.getCause());
         }
     }
@@ -170,15 +172,15 @@ public class StatsService {
         return userIds;
     }
 
-    private List<Appointment> getDoctorAppointments(int doctorId) throws QueryException {
+    private List<Appointment> getDoctorAppointments(int doctorId) throws QueryException, ParseException {
         List<Appointment> appointments = new ArrayList<>();
 
         String sql = "SELECT * FROM appointments WHERE doctor_id = ?";
         Object[] params = {doctorId};
 
-        queryDispatcher.dispatch(sql, params).getResults().forEach(result -> {
+        for (Map<String, Object> result : queryDispatcher.dispatch(sql, params).getResults()) {
             appointments.add(new Appointment(result));
-        });
+        }
 
         return appointments;
     }

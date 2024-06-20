@@ -6,6 +6,9 @@ import lombok.Data;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
 @Data
@@ -24,16 +27,59 @@ public class Appointment {
     @Nullable
     public Date follow_up_date;
 
-    public Appointment(Map<String, Object> data) {
-        this.id = (int) data.get("id");
-        this.patient_id = (int) data.get("patient_id");
-        this.doctor_id = (int) data.get("doctor_id");
-        this.appointment_date = (Date) data.get("appointment_date");
-        this.appointment_time = (Time) data.get("appointment_time");
-        this.appointment_status = (String) data.get("appointment_status");
-        this.appointment_name = (String) data.get("appointment_name");
-        this.prescription_id = (Integer) data.get("prescription_id");
-        this.diagnosis = (String) data.get("diagnosis");
-        this.follow_up_date = (Date) data.get("follow_up_date");
+    public Appointment(Map<String, Object> data) throws ParseException {
+        if(data.containsKey("id")) {
+            this.id = (int) data.get("id");
+        }
+        if(data.containsKey("patient_id")) {
+            this.patient_id = (int) data.get("patient_id");
+        }
+        if(data.containsKey("doctor_id")) {
+            this.doctor_id = (int) data.get("doctor_id");
+        }
+        if(data.containsKey("appointment_date")) {
+            if(data.get("appointment_date") instanceof String) {
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                this.appointment_date = new Date(dateFormat.parse((String) data.get("appointment_date")).getTime());
+            } else {
+                this.appointment_date = (Date) data.get("appointment_date");
+            }
+        }
+        if(data.containsKey("appointment_time")) {
+            DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+            if(data.get("appointment_time") instanceof String) {
+                try {
+                    this.appointment_time = new Time(timeFormat.parse((String) data.get("appointment_time")).getTime());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                this.appointment_time = new Time(timeFormat.parse(data.get("appointment_time").toString()).getTime());
+            }
+        }
+        if(data.containsKey("appointment_status")) {
+            this.appointment_status = (String) data.get("appointment_status");
+        }
+        if(data.containsKey("appointment_name")) {
+            this.appointment_name = (String) data.get("appointment_name");
+        }
+        if(data.containsKey("prescription_id")) {
+            this.prescription_id = (Integer) data.get("prescription_id");
+        }
+        if(data.containsKey("diagnosis")) {
+            this.diagnosis = (String) data.get("diagnosis");
+        }
+        if(data.containsKey("follow_up_date")) {
+            if(data.get("follow_up_date") instanceof String) {
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    this.follow_up_date = new Date(dateFormat.parse((String) data.get("follow_up_date")).getTime());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                this.follow_up_date = (Date) data.get("follow_up_date");
+            }
+        }
     }
 }

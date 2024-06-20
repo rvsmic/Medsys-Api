@@ -25,7 +25,7 @@ class SecUserDetailsServiceTest {
 
     @Test
     void testCreateUser() {
-        SecUserDetails userDetails = new SecUserDetails(0, "name", new GregorianCalendar(2024, Calendar.MAY, 19, 6, 33).getTime(), "pesel", "gender", "phone_number", "address", "speciality", "username", "password", "profession");
+        SecUserDetails userDetails = new SecUserDetails(0, "name", new GregorianCalendar(2024, Calendar.MAY, 19, 6, 33).getTime(), "pesel", "gender", "phone_number", "address", "speciality", "username", "profession");
         SecUserToken token = secUserDetailsService.createUser(userDetails);
         Assertions.assertEquals(token.getValue(), secUserDetailsService.tokens.get(token.getValue()).getToken().getValue());
         secUserDetailsService.deleteUser(token.getValue());
