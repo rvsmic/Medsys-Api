@@ -59,7 +59,7 @@ public class PrescriptionsController {
             } else {
                 return new BasicResponse(200, "OK", prescriptionService.getPrescription(id)).generateResponse();
             }
-        } catch (QueryException e) {
+        } catch (QueryException | java.text.ParseException e) {
             return errorResponseHandler.otherExceptionHandler(e);
         }
     }
@@ -86,7 +86,7 @@ public class PrescriptionsController {
         try {
             prescriptionService.addPrescription(new Prescription(JsonHandler.readJsonData(body)));
             return new BasicResponse(200, "OK").generateResponse();
-        } catch (QueryException | ParseException e) {
+        } catch (QueryException | ParseException | java.text.ParseException e) {
             return errorResponseHandler.otherExceptionHandler(e);
         }
     }
@@ -113,7 +113,7 @@ public class PrescriptionsController {
         try {
             prescriptionService.updatePrescription(id, new Prescription(JsonHandler.readJsonData(body)));
             return new BasicResponse(200, "OK").generateResponse();
-        } catch (QueryException | ParseException e) {
+        } catch (QueryException | ParseException | java.text.ParseException e) {
             return errorResponseHandler.otherExceptionHandler(e);
         }
     }
@@ -131,7 +131,7 @@ public class PrescriptionsController {
         if (user == null) {
             return errorResponseHandler.generateErrorResponse(401, new BadCredentialsException("Invalid or expired token."));
         }
-        if (!user.hasAuthority(SecUserRoles.ROLE_PERSONNEL.toString()) && !user.hasAuthority(SecUserRoles.ROLE_ADMIN.toString())) {
+        if (!user.hasAuthority(SecUserRoles.ROLE_ADMIN.toString())) {
             return errorResponseHandler.generateErrorResponse(403, new AccessDeniedException("User does not have permission to access this resource."));
         }
 
