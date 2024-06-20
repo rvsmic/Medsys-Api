@@ -68,18 +68,18 @@ public class PatientsService {
         }
         String sql = "INSERT INTO patients (id , name, date_of_birth, pesel, gender, phone_number, address, date_of_death, blood_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         Object[] params = {patient.getId(), patient.getName(), patient.getDate_of_birth(), patient.getPesel(), patient.getGender(), patient.getPhone_number(), patient.getAddress(), patient.getDate_of_death(), patient.getBlood_type()};
-        queryDispatcher.dispatch(sql, params);
+        queryDispatcher.dispatchUpdate(sql, params);
     }
 
     public void updatePatient(int id, Patient patient) throws QueryException {
         String sql = "UPDATE patients SET name = ?, date_of_birth = ?, pesel = ?, gender = ?, phone_number = ?, address = ?, date_of_death = ?, blood_type = ? WHERE id = ?";
         Object[] params = {patient.getName(), patient.getDate_of_birth(), patient.getPesel(), patient.getGender(), patient.getPhone_number(), patient.getAddress(), patient.getDate_of_death(), patient.getBlood_type(), id};
-        queryDispatcher.dispatch(sql, params);
+        queryDispatcher.dispatchUpdate(sql, params);
     }
 
     public void deletePatient(int id) throws QueryException {
         String sql = "DELETE FROM patients WHERE id = ?";
         Object[] params = {id};
-        queryDispatcher.dispatch(sql, params);
+        queryDispatcher.dispatchUpdate(sql, params);
     }
 }
