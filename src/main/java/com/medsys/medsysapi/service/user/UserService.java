@@ -54,7 +54,7 @@ public class UserService {
             responseData.put("login", userDetails.getUsername());
             responseData.put("dob", DataFormatUtils.dateAsFormattedString(userDetails.getDate_of_birth(), "dd.MM.yyyy"));
             responseData.put("profession", userDetails.getProfession());
-            responseData.put("speciality", userDetails.getSpeciality());
+            responseData.put("specialty", userDetails.getSpecialty());
 
             return new BasicResponse(200, "OK", responseData).generateResponse();
 
@@ -63,32 +63,15 @@ public class UserService {
         }
     }
 
-    public List<SecUserDetails> getAllUsers() throws QueryException {
-        List<Map<String, Object>> results = queryDispatcher.dispatch("SELECT * FROM personnel", new Object[]{}).getResults();
-        List<SecUserDetails> users = new ArrayList<>();
-        for (Map<String, Object> result : results) {
-            users.add(new SecUserDetails(result));
-        }
-        return users;
-    }
-
     public SecUserDetails getUser(int id) throws QueryException {
         String sql = "SELECT * FROM personnel WHERE id = ?";
         Object[] params = {id};
         return new SecUserDetails(queryDispatcher.dispatch(sql, params).getFirstResult());
     }
 
-    public List<SecUserDetails> getAllDoctors() throws QueryException {
-        List<Map<String, Object>> results = queryDispatcher.dispatch("SELECT * FROM personnel WHERE profession = 'doctor'", new Object[]{}).getResults();
-        List<SecUserDetails> doctors = new ArrayList<>();
-        for (Map<String, Object> result : results) {
-            doctors.add(new SecUserDetails(result));
-        }
-        return doctors;
-    }
 
     public List<SecUserDetails> getAllPersonnel() throws QueryException {
-        List<Map<String, Object>> results = queryDispatcher.dispatch("SELECT * FROM personnel WHERE profession = 'personnel'", new Object[]{}).getResults();
+        List<Map<String, Object>> results = queryDispatcher.dispatch("SELECT * FROM personnel ", new Object[]{}).getResults();
         List<SecUserDetails> personnel = new ArrayList<>();
         for (Map<String, Object> result : results) {
             personnel.add(new SecUserDetails(result));
@@ -96,41 +79,12 @@ public class UserService {
         return personnel;
     }
 
-    public List<SecUserDetails> getAllAdmins() throws QueryException {
-        List<Map<String, Object>> results = queryDispatcher.dispatch("SELECT * FROM personnel WHERE profession = 'admin'", new Object[]{}).getResults();
-        List<SecUserDetails> admins = new ArrayList<>();
-        for (Map<String, Object> result : results) {
-            admins.add(new SecUserDetails(result));
-        }
-        return admins;
-    }
-
-    public SecUserDetails getDoctor(int id) throws QueryException {
-        SecUserDetails doctor = getUser(id);
-        String profession = (String) doctor.getProfession().toLowerCase();
-        if (!profession.equals("doctor") && !profession.equals("lekarz") && !profession.equals("doktor")) {
-            throw new QueryException(400, "Doctor with id " + id + " not found.");
-        }
-        return doctor;
-    }
 
     public SecUserDetails getPersonnel(int id) throws QueryException {
         SecUserDetails personnel = getUser(id);
-        String profession = (String) personnel.getProfession().toLowerCase();
-        if (!profession.equals("personnel") && !profession.equals("personel")) {
-            throw new QueryException(400, "Personnel with id " + id + " not found.");
-        }
         return personnel;
     }
 
-    public SecUserDetails getAdmin(int id) throws QueryException {
-        SecUserDetails admin = getUser(id);
-        String profession = (String) admin.getProfession().toLowerCase();
-        if (!profession.equals("admin")) {
-            throw new QueryException(400, "Admin with id " + id + " not found.");
-        }
-        return admin;
-    }
 
     public List<Map<String, Object>> getAllUsersLabeled() throws QueryException {
         String sql = "SELECT id, name FROM personnel";
@@ -180,7 +134,7 @@ public class UserService {
         if(password == null) {
             throw new QueryException(400, "Password cannot be null.");
         }
-        List<SecUserDetails> users = getAllUsers();
+        List<SecUserDetails> users = getAllPersonnel();
         int user_id = 1;
         while(true) {
             boolean found = false;
@@ -195,19 +149,19 @@ public class UserService {
             }
             user_id++;
         }
-        String sql = "INSERT INTO personnel (id, name, date_of_birth, pesel, gender, phone_number, address, speciality, username, password, profession) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        Object[] params = {user_id, userDetails.getName(), userDetails.getDate_of_birth(), userDetails.getPesel(), userDetails.getGender(), userDetails.getPhone_number(), userDetails.getAddress(), userDetails.getSpeciality(), userDetails.getUsername(), password, userDetails.getProfession()};
+        String sql = "INSERT INTO personnel (id, name, date_of_birth, pesel, gender, phone_number, address, specialty, username, password, profession) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        Object[] params = {user_id, userDetails.getName(), userDetails.getDate_of_birth(), userDetails.getPesel(), userDetails.getGender(), userDetails.getPhone_number(), userDetails.getAddress(), userDetails.getSpecialty(), userDetails.getUsername(), password, userDetails.getProfession()};
         queryDispatcher.dispatchUpdate(sql, params);
     }
 
     public void updateUser(int id, SecUserDetails userDetails, @Nullable String password) throws QueryException {
         if (password == null) {
-            String sql = "UPDATE personnel SET name = ?, date_of_birth = ?, pesel = ?, gender = ?, phone_number = ?, address = ?, speciality = ?, username = ?, profession = ? WHERE id = ?";
-            Object[] params = {userDetails.getName(), userDetails.getDate_of_birth(), userDetails.getPesel(), userDetails.getGender(), userDetails.getPhone_number(), userDetails.getAddress(), userDetails.getSpeciality(), userDetails.getUsername(), userDetails.getProfession(), id};
+            String sql = "UPDATE personnel SET name = ?, date_of_birth = ?, pesel = ?, gender = ?, phone_number = ?, address = ?, specialty = ?, username = ?, profession = ? WHERE id = ?";
+            Object[] params = {userDetails.getName(), userDetails.getDate_of_birth(), userDetails.getPesel(), userDetails.getGender(), userDetails.getPhone_number(), userDetails.getAddress(), userDetails.getSpecialty(), userDetails.getUsername(), userDetails.getProfession(), id};
             queryDispatcher.dispatchUpdate(sql, params);
         } else {
-            String sql = "UPDATE personnel SET name = ?, date_of_birth = ?, pesel = ?, gender = ?, phone_number = ?, address = ?, speciality = ?, username = ?, password = ?, profession = ? WHERE id = ?";
-            Object[] params = {userDetails.getName(), userDetails.getDate_of_birth(), userDetails.getPesel(), userDetails.getGender(), userDetails.getPhone_number(), userDetails.getAddress(), userDetails.getSpeciality(), userDetails.getUsername(), password, userDetails.getProfession(), id};
+            String sql = "UPDATE personnel SET name = ?, date_of_birth = ?, pesel = ?, gender = ?, phone_number = ?, address = ?, specialty = ?, username = ?, password = ?, profession = ? WHERE id = ?";
+            Object[] params = {userDetails.getName(), userDetails.getDate_of_birth(), userDetails.getPesel(), userDetails.getGender(), userDetails.getPhone_number(), userDetails.getAddress(), userDetails.getSpecialty(), userDetails.getUsername(), password, userDetails.getProfession(), id};
             queryDispatcher.dispatchUpdate(sql, params);
         }
     }
