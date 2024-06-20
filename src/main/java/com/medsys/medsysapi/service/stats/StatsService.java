@@ -213,7 +213,11 @@ public class StatsService {
         Object[] params = {doctorId};
 
         queryDispatcher.dispatch(sql, params).getResults().forEach(result -> {
-            labTests.add(new LabTest(result));
+            try {
+                labTests.add(new LabTest(result));
+            } catch (ParseException e) {
+                errorResponseHandler.otherExceptionHandler(e);
+            }
         });
 
         return labTests;

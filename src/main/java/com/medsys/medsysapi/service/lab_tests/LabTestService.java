@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,20 +23,16 @@ public class LabTestService {
         this.queryDispatcher = queryDispatcher;
     }
 
-    public LabTest getLabTest(int id) throws QueryException {
+    public LabTest getLabTest(int id) throws QueryException, ParseException {
         String sql = "SELECT * FROM lab_tests WHERE id = ?";
         Object[] params = {id};
         return new LabTest(queryDispatcher.dispatch(sql, params).getFirstResult());
     }
 
-    public List<LabTest> getAllLabTests() throws QueryException {
-        String sql = "SELECT * FROM lab_tests";
+    public List<Map<String, Object>> getAllLabTests() throws QueryException, ParseException {
+        String sql = "SELECT l.id AS \"id\", pt.name AS \"patient\", l.test_type AS \"test_type\", l.test_date AS \"test_date\" FROM lab_tests l JOIN patients pt ON l.patient_id = pt.id;";
         Object[] params = {};
-        List<Map<String, Object>> results = queryDispatcher.dispatch(sql, params).getResults();
-        List<LabTest> labTests = new ArrayList<>();
-        for(Map<String, Object> result : results) {
-            labTests.add(new LabTest(result));
-        }
+        List<Map<String, Object>> labTests = queryDispatcher.dispatch(sql, params).getResults();
         return labTests;
     }
 
@@ -50,13 +47,13 @@ public class LabTestService {
         return labeled;
     }
 
-    public void addLabTest(LabTest labTest) throws QueryException {
-        List<LabTest> labTests = getAllLabTests();
+    public void addLabTest(LabTest labTest) throws QueryException, ParseException {
+        List<Map<String, Object>> labTests = getAllLabTests();
         int labTest_id = 1;
         while (true) {
             boolean found = false;
-            for (LabTest p : labTests) {
-                if (p.getId() == labTest_id) {
+            for(Map<String, Object> l : labTests) {
+                if((int)l.get("id") == labTest_id) {
                     found = true;
                     break;
                 }
@@ -68,18 +65,18 @@ public class LabTestService {
         }
         String sql = "INSERT INTO lab_tests (id, patient_id, test_date, test_type, test_result) VALUES (?, ?, ?, ?, ?)";
         Object[] params = {labTest_id, labTest.getPatient_id(), labTest.getTest_date(), labTest.getTest_type(), labTest.getTest_result()};
-        queryDispatcher.dispatch(sql, params);
+        queryDispatcher.dispatchUpdate(sql, params);
     }
 
     public void updateLabTest(int id, LabTest labTest) throws QueryException {
         String sql = "UPDATE lab_tests SET patient_id = ?, test_date = ?, test_type = ?, test_result = ? WHERE id = ?";
         Object[] params = {labTest.getPatient_id(), labTest.getTest_date(), labTest.getTest_type(), labTest.getTest_result(), id};
-        queryDispatcher.dispatch(sql, params);
+        queryDispatcher.dispatchUpdate(sql, params);
     }
 
     public void deleteLabTest(int id) throws QueryException {
         String sql = "DELETE FROM lab_tests WHERE id = ?";
         Object[] params = {id};
-        queryDispatcher.dispatch(sql, params);
+        queryDispatcher.dispatchUpdate(sql, params);
     }
 }
