@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.sql.Date;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
 @Data
@@ -15,7 +18,7 @@ public class LabTest {
     public String test_type;
     public String test_result;
 
-    public LabTest(Map<String, Object> data) {
+    public LabTest(Map<String, Object> data) throws ParseException {
         if(data.containsKey("id")) {
             this.id = (int) data.get("id");
         }
@@ -23,7 +26,12 @@ public class LabTest {
             this.patient_id = (int) data.get("patient_id");
         }
         if(data.containsKey("test_date")) {
-            this.test_date = (Date) data.get("test_date");
+            if(data.get("test_date") instanceof String) {
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                this.test_date = new Date(dateFormat.parse((String) data.get("test_date")).getTime());
+            } else {
+                this.test_date = (Date) data.get("test_date");
+            }
         }
         if(data.containsKey("test_type")) {
             this.test_type = (String) data.get("test_type");

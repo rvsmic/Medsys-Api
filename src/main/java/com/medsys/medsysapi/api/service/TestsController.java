@@ -59,7 +59,7 @@ public class TestsController {
             } else {
                 return new BasicResponse(200, "OK", labTestService.getLabTest(id)).generateResponse();
             }
-        } catch (QueryException e) {
+        } catch (QueryException | java.text.ParseException e) {
             return errorResponseHandler.otherExceptionHandler(e);
         }
     }
@@ -86,7 +86,7 @@ public class TestsController {
         try {
             labTestService.addLabTest(new LabTest(JsonHandler.readJsonData(body)));
             return new BasicResponse(200, "OK").generateResponse();
-        } catch (QueryException | ParseException e) {
+        } catch (QueryException | ParseException | java.text.ParseException e) {
             return errorResponseHandler.otherExceptionHandler(e);
         }
     }
@@ -113,7 +113,7 @@ public class TestsController {
         try {
             labTestService.updateLabTest(id, new LabTest(JsonHandler.readJsonData(body)));
             return new BasicResponse(200, "OK").generateResponse();
-        } catch (QueryException | ParseException e) {
+        } catch (QueryException | ParseException | java.text.ParseException e) {
             return errorResponseHandler.otherExceptionHandler(e);
         }
     }
