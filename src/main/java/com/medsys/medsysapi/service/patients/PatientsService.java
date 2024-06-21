@@ -67,7 +67,7 @@ public class PatientsService {
             patient_id++;
         }
         String sql = "INSERT INTO patients (id , name, date_of_birth, pesel, gender, phone_number, address, date_of_death, blood_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        Object[] params = {patient.getId(), patient.getName(), patient.getDate_of_birth(), patient.getPesel(), patient.getGender(), patient.getPhone_number(), patient.getAddress(), patient.getDate_of_death(), patient.getBlood_type()};
+        Object[] params = {patient_id, patient.getName(), patient.getDate_of_birth(), patient.getPesel(), patient.getGender(), patient.getPhone_number(), patient.getAddress(), patient.getDate_of_death(), patient.getBlood_type()};
         queryDispatcher.dispatchUpdate(sql, params);
     }
 
