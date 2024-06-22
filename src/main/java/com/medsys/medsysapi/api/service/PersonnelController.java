@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.SecureRandom;
@@ -83,9 +84,12 @@ public class PersonnelController {
 
         user.getToken().refreshToken();
 
+        String newPassword = generatePassword();
+        String newPasswordHash = hashPassword(newPassword);
+
         try {
-            userService.addUser(new SecUserDetails(JsonHandler.readJsonData(body)),generatePassword());
-            return new BasicResponse(200, "OK").generateResponse();
+            userService.addUser(new SecUserDetails(JsonHandler.readJsonData(body)), newPasswordHash);
+            return new BasicResponse(200, "OK", newPassword).generateResponse();
         } catch (QueryException | ParseException e) {
             return errorResponseHandler.otherExceptionHandler(e);
         }
@@ -253,5 +257,9 @@ public class PersonnelController {
         Base64.Encoder base64Encoder = Base64.getUrlEncoder();
         secureRandom.nextBytes(randomBytes);
         return base64Encoder.encodeToString(randomBytes);
+    }
+
+    private String hashPassword(String password) {
+        return DigestUtils.md5DigestAsHex(password.getBytes()).toUpperCase();
     }
 }
