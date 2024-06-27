@@ -46,11 +46,11 @@ public class ErrorService {
         Object[] params = {};
         List<Map<String, Object>> results = queryDispatcher.dispatch(sql, params).getResults();
         for(Map<String, Object> result : results) {
-            Time time = (Time) result.get("godzina");
+            Time time = (Time) result.get("time");
             String timeString = time.toString();
             String[] timeParts = timeString.split(":");
             String timeFormatted = timeParts[0] + ":" + timeParts[1];
-            result.put("godzina", timeFormatted);
+            result.put("time", timeFormatted);
         }
 
         return results;
@@ -79,8 +79,8 @@ public class ErrorService {
     }
 
     public void updateError(int id, Error error) throws QueryException {
-        String sql = "UPDATE appointments SET title = ?, description = ?, date = ?, time = ?, resolved = ? WHERE id = ?";
-        Object[] params = {error.getTitle(), error.getDescription(), error.getDate(), error.getTime(), error.getResolved(), id};
+        String sql = "UPDATE appointments SET title = ?, description = ?, resolved = ? WHERE id = ?";
+        Object[] params = {error.getTitle(), error.getDescription(), error.getResolved(), id};
         queryDispatcher.dispatchUpdate(sql, params);
     }
 }
