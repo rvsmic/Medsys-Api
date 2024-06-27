@@ -79,7 +79,7 @@ public class ErrorService {
     }
 
     public void updateError(int id, Error error) throws QueryException {
-        String sql = "UPDATE appointments SET title = ?, description = ?, resolved = ? WHERE id = ?";
+        String sql = "UPDATE errors SET title = ?, description = ?, resolved = ? WHERE id = ?";
         Object[] params = {error.getTitle(), error.getDescription(), error.getResolved(), id};
         queryDispatcher.dispatchUpdate(sql, params);
     }
