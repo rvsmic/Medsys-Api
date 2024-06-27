@@ -33,10 +33,12 @@ public class Error {
         if(data.containsKey("date")) {
             if(data.get("date") instanceof String) {
                 DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                this.date = new java.sql.Date(dateFormat.parse((String) data.get("date")).getTime());
+                this.date = new Date(dateFormat.parse((String) data.get("date")).getTime());
             } else {
-                this.date = (java.sql.Date) data.get("date");
+                this.date = (Date) data.get("date");
             }
+        } else {
+            this.date = new Date(System.currentTimeMillis());
         }
         if(data.containsKey("time")) {
             DateFormat timeFormat = new SimpleDateFormat("HH:mm");
@@ -49,6 +51,8 @@ public class Error {
             } else {
                 this.time = new Time(timeFormat.parse(data.get("time").toString()).getTime());
             }
+        } else {
+            this.time = new Time(System.currentTimeMillis());
         }
         if(data.containsKey("resolved")) {
             this.resolved = (Boolean) data.get("resolved");
