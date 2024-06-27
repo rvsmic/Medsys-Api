@@ -37,8 +37,6 @@ public class Error {
             } else {
                 this.date = (Date) data.get("date");
             }
-        } else {
-            this.date = new Date(System.currentTimeMillis());
         }
         if(data.containsKey("time")) {
             DateFormat timeFormat = new SimpleDateFormat("HH:mm");
@@ -51,8 +49,6 @@ public class Error {
             } else {
                 this.time = new Time(timeFormat.parse(data.get("time").toString()).getTime());
             }
-        } else {
-            this.time = new Time(System.currentTimeMillis());
         }
         if(data.containsKey("resolved")) {
             this.resolved = (Boolean) data.get("resolved");

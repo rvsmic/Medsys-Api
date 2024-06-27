@@ -4,6 +4,7 @@ import com.medsys.medsysapi.db.QueryDispatcher;
 import com.medsys.medsysapi.db.QueryException;
 import com.medsys.medsysapi.model.Error;
 import com.medsys.medsysapi.utils.ErrorResponseHandler;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Time;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -70,8 +72,8 @@ public class ErrorService {
             }
             error_id++;
         }
-        String sql = "INSERT INTO errors (id, title, description, date, time, resolved) VALUES (?, ?, ?, ?, ?, ?)";
-        Object[] params = {error_id, error.getTitle(), error.getDescription(), error.getDate(), error.getTime(), false};
+        String sql = "INSERT INTO errors (id, title, description, date, time, resolved) VALUES (?, ?, ?, NOW(), NOW(), false)";
+        Object[] params = {error_id, error.getTitle(), error.getDescription()};
         queryDispatcher.dispatchUpdate(sql, params);
 
     }
