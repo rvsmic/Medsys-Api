@@ -71,7 +71,7 @@ public class ErrorController {
         if (user == null) {
             return errorResponseHandler.generateErrorResponse(401, new BadCredentialsException("Invalid or expired token."));
         }
-        if (!user.hasAuthority(SecUserRoles.ROLE_DOCTOR.toString()) && !user.hasAuthority(SecUserRoles.ROLE_PERSONNEL.toString()) && !user.hasAuthority(SecUserRoles.ROLE_ADMIN.toString())) {
+        if (!user.hasAuthority(SecUserRoles.ROLE_USER.toString())) {
             return errorResponseHandler.generateErrorResponse(403, new AccessDeniedException("User does not have permission to access this resource."));
         }
 
@@ -98,7 +98,7 @@ public class ErrorController {
         if (user == null) {
             return errorResponseHandler.generateErrorResponse(401, new BadCredentialsException("Invalid or expired token."));
         }
-        if (!user.hasAuthority(SecUserRoles.ROLE_DOCTOR.toString()) && !user.hasAuthority(SecUserRoles.ROLE_PERSONNEL.toString()) && !user.hasAuthority(SecUserRoles.ROLE_ADMIN.toString())) {
+        if (!user.hasAuthority(SecUserRoles.ROLE_USER.toString()) && !user.hasAuthority(SecUserRoles.ROLE_ADMIN.toString())) {
             return errorResponseHandler.generateErrorResponse(403, new AccessDeniedException("User does not have permission to access this resource."));
         }
 
