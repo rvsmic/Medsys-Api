@@ -4,6 +4,7 @@ import com.medsys.medsysapi.db.QueryDispatcher;
 import com.medsys.medsysapi.db.QueryException;
 import com.medsys.medsysapi.model.Error;
 import com.medsys.medsysapi.utils.ErrorResponseHandler;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Time;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -44,11 +46,11 @@ public class ErrorService {
         Object[] params = {};
         List<Map<String, Object>> results = queryDispatcher.dispatch(sql, params).getResults();
         for(Map<String, Object> result : results) {
-            Time time = (Time) result.get("godzina");
+            Time time = (Time) result.get("time");
             String timeString = time.toString();
             String[] timeParts = timeString.split(":");
             String timeFormatted = timeParts[0] + ":" + timeParts[1];
-            result.put("godzina", timeFormatted);
+            result.put("time", timeFormatted);
         }
 
         return results;
@@ -70,15 +72,15 @@ public class ErrorService {
             }
             error_id++;
         }
-        String sql = "INSERT INTO errors (id, title, description, date, time, resolved) VALUES (?, ?, ?, ?, ?, ?)";
-        Object[] params = {error_id, error.getTitle(), error.getDescription(), error.getDate(), error.getTime(), false};
+        String sql = "INSERT INTO errors (id, title, description, date, time, resolved) VALUES (?, ?, ?, NOW(), NOW(), false)";
+        Object[] params = {error_id, error.getTitle(), error.getDescription()};
         queryDispatcher.dispatchUpdate(sql, params);
 
     }
 
     public void updateError(int id, Error error) throws QueryException {
-        String sql = "UPDATE appointments SET title = ?, description = ?, date = ?, time = ?, resolved = ? WHERE id = ?";
-        Object[] params = {error.getTitle(), error.getDescription(), error.getDate(), error.getTime(), error.getResolved(), id};
+        String sql = "UPDATE errors SET title = ?, description = ?, resolved = ? WHERE id = ?";
+        Object[] params = {error.getTitle(), error.getDescription(), error.getResolved(), id};
         queryDispatcher.dispatchUpdate(sql, params);
     }
 }

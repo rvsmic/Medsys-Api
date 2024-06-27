@@ -33,9 +33,9 @@ public class Error {
         if(data.containsKey("date")) {
             if(data.get("date") instanceof String) {
                 DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                this.date = new java.sql.Date(dateFormat.parse((String) data.get("date")).getTime());
+                this.date = new Date(dateFormat.parse((String) data.get("date")).getTime());
             } else {
-                this.date = (java.sql.Date) data.get("date");
+                this.date = (Date) data.get("date");
             }
         }
         if(data.containsKey("time")) {
