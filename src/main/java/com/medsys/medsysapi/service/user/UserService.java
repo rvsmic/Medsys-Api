@@ -55,6 +55,10 @@ public class UserService {
             responseData.put("dob", DataFormatUtils.dateAsFormattedString(userDetails.getDate_of_birth(), "dd.MM.yyyy"));
             responseData.put("profession", userDetails.getProfession());
             responseData.put("specialty", userDetails.getSpecialty());
+            responseData.put("pesel", userDetails.getPesel());
+            responseData.put("gender", userDetails.getGender());
+            responseData.put("phone_number", userDetails.getPhone_number());
+            responseData.put("address", userDetails.getAddress());
 
             return new BasicResponse(200, "OK", responseData).generateResponse();
 
@@ -169,6 +173,12 @@ public class UserService {
     public void deleteUser(int id) throws QueryException {
         String sql = "DELETE FROM personnel WHERE id = ?";
         Object[] params = {id};
+        queryDispatcher.dispatchUpdate(sql, params);
+    }
+
+    public void updatePassword(int id, String newPassword) throws QueryException {
+        String sql = "UPDATE personnel SET password = ? WHERE id = ?";
+        Object[] params = {newPassword, id};
         queryDispatcher.dispatchUpdate(sql, params);
     }
 }
