@@ -40,21 +40,21 @@ public class PrescriptionService {
     }
 
     public List<Map<String, Object>> getAllPrescriptionsLabeled() throws QueryException {
-        String sql = "SELECT id, prescription_date, prescription_details FROM prescriptions";
+        String sql = "SELECT id, prescription_date FROM prescriptions";
         Object[] params = {};
         List<Map<String, Object>> results = queryDispatcher.dispatch(sql, params).getResults();
         List<Map<String, Object>> labeled = new ArrayList<>();
         for(Map<String, Object> result : results) {
             Date date = (Date) result.get("prescription_date");
             String dateString = "";
-            if(date.getMonth() < 10) {
+            if(date.getDate() < 10) {
                 dateString += "0";
             }
-            dateString += date.getMonth() + "/";
-            if(date.getDay() < 10) {
+            dateString += date.getDate() + "/";
+            if((date.getMonth() + 1) < 10) {
                 dateString += "0";
             }
-            dateString += date.getDay() + "/" + (date.getYear() + 1900);
+            dateString += (date.getMonth() + 1) + "/" + (date.getYear() + 1900);
             String label = "rec. " + result.get("id") + "-" + dateString;
             labeled.add(Map.of("value", result.get("id"), "label", label));
         }
