@@ -6,6 +6,8 @@ import com.medsys.medsysapi.security.SecUser;
 import com.medsys.medsysapi.security.SecUserDetailsService;
 import com.medsys.medsysapi.security.SecUserRoles;
 import com.medsys.medsysapi.service.errors.ErrorService;
+import com.medsys.medsysapi.service.stats.ActionType;
+import com.medsys.medsysapi.service.stats.StatsService;
 import com.medsys.medsysapi.utils.BasicResponse;
 import com.medsys.medsysapi.utils.ErrorResponseHandler;
 import com.medsys.medsysapi.utils.JsonHandler;
@@ -24,6 +26,9 @@ public class ErrorController {
 
     @Autowired
     ErrorService errorService;
+
+    @Autowired
+    StatsService statsService;
 
     @Autowired
     ErrorResponseHandler errorResponseHandler;
@@ -79,6 +84,7 @@ public class ErrorController {
 
         try {
             errorService.addError(new Error(JsonHandler.readJsonData(body)));
+            statsService.recordUserAction(user.getUserDetails().getId(), ActionType.PERSONNEL_BUG_REPORTED);
             return new BasicResponse(200, "OK").generateResponse();
         } catch (QueryException | ParseException | java.text.ParseException e) {
             return errorResponseHandler.otherExceptionHandler(e);
@@ -86,7 +92,7 @@ public class ErrorController {
     }
 
     @PatchMapping("/service/errors")
-    public ResponseEntity visits(@RequestParam int id, @RequestBody String body, @RequestHeader String token) {
+    public ResponseEntity errors(@RequestParam int id, @RequestBody String body, @RequestHeader String token) {
         SecUser user = null;
 
         if (token == null) {
