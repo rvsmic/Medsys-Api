@@ -58,6 +58,10 @@ class UserServiceTest {
             put("dob", "28.05.2024");
             put("profession", "profession");
             put("specialty", "specialty");
+            put("phone_number", "phone_number");
+            put("address", "address");
+            put("pesel", "pesel");
+            put("gender", "gender");
         }}).generateResponse();
         System.out.println(result.getBody().toString());
         assertThat(result.getBody().toString()).isEqualTo(expected.getBody().toString());
