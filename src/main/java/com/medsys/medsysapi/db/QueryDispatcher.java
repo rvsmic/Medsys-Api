@@ -14,33 +14,64 @@ import org.springframework.util.DigestUtils;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 @Service
 public class QueryDispatcher {
 
     private final Logger logger = LoggerFactory.getLogger(QueryDispatcher.class);
 
-    @Autowired
-    DataSource dataSource;
-
+    final DataSource dataSource;
     protected Connection connection;
 
-    public QueryDispatcher() {
+    @Autowired
+    public QueryDispatcher(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
-    public QueryResults dispatch(String sql, String[] params) throws QueryException {
+    public QueryResults dispatch(String sql, Object[] params) throws QueryException {
         try {
             connection = dataSource.getConnection();
             PreparedStatement p = connection.prepareStatement(sql);
 
             for (int i = 0; i < params.length; i++) {
-                p.setString(i + 1, params[i]);
+                p.setObject(i + 1, params[i]);
             }
             QueryResults queryResults = new QueryResults();
             queryResults.getFromResultSet(p.executeQuery());
             connection.close();
             return queryResults;
         } catch (Throwable e) {
+            try {
+                if(!connection.isClosed()){
+                    connection.close();
+                }
+            } catch (SQLException ex) {
+                throw new QueryException(ex);
+            }
+            throw new QueryException(e);
+        }
+    }
+
+    public boolean dispatchUpdate(String sql, Object[] params) throws QueryException {
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement p = connection.prepareStatement(sql);
+
+            for (int i = 0; i < params.length; i++) {
+                p.setObject(i + 1, params[i]);
+            }
+            p.executeUpdate();
+            connection.close();
+            return true;
+        } catch (Throwable e) {
+            try {
+                if(!connection.isClosed()){
+                    connection.close();
+                }
+            } catch (SQLException ex) {
+                throw new QueryException(ex);
+            }
             throw new QueryException(e);
         }
     }

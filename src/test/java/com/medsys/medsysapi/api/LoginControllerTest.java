@@ -8,9 +8,5 @@ class LoginControllerTest {
 
     @Test
     void testLogin() {
-        /*
-        TODO: testy
-        do ustalenia czy potrzebne
-         */
     }
 }

@@ -10,7 +10,7 @@ import java.util.Map;
 public class QueryResults {
     private List<Map<String, Object>> results;
 
-    QueryResults() {
+    public QueryResults() {
         this.results = new ArrayList<>();
     }
 

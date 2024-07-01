@@ -7,7 +7,7 @@ import com.medsys.medsysapi.utils.BasicResponse;
 import com.medsys.medsysapi.utils.ErrorResponseHandler;
 import com.medsys.medsysapi.utils.JsonHandler;
 import net.minidev.json.JSONObject;
-import org.apache.coyote.BadRequestException;
+import net.minidev.json.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,13 +21,14 @@ public class LoginController {
     QueryDispatcher queryDispatcher;
 
     @Autowired
+    ErrorResponseHandler errorResponseHandler;
+
+    @Autowired
     SecUserDetailsService secUserDetailsService;
 
     @PostMapping
     public ResponseEntity login(@RequestBody(required = true) String data) {
         int id = -1;
-
-        String queryResult = "";
 
         JSONObject jsonData = null;
         String username = "";
@@ -35,10 +36,18 @@ public class LoginController {
 
 
         try {
+            if(data == null) {
+                return errorResponseHandler.generateErrorResponse(400, new Exception("Could not find data in request body."));
+            }
+
             jsonData = JsonHandler.readJsonData(data);
 
             username = (String) jsonData.get("username");
             password = (String) jsonData.get("password");
+
+            if(username == null || password == null) {
+                return errorResponseHandler.generateErrorResponse(400, new Exception("Could not find username or password in request body."));
+            }
 
             id = queryDispatcher.getIdUsername(username);
 
@@ -46,11 +55,11 @@ public class LoginController {
                 return new BasicResponse(200, "Login successful.", secUserDetailsService.createUser(queryDispatcher.getSecUserDetails(id))).generateResponse();
             }
         } catch (QueryException e) {
-            return ErrorResponseHandler.generateErrorResponse(e.getStatus(), e);
-        } catch (BadRequestException e) {
-            return ErrorResponseHandler.generateErrorResponse(400, e);
+            return errorResponseHandler.generateErrorResponse(e.getStatus(), e);
+        } catch (ParseException e) {
+            return errorResponseHandler.generateErrorResponse(400, e);
         }
 
-        return ErrorResponseHandler.generateErrorResponse(500, new Exception("Unexpected error at " + this.getClass().getSimpleName() + "::login"));
+        return errorResponseHandler.generateErrorResponse(500, new Exception("Unexpected error at " + this.getClass().getSimpleName() + "::login"));
     }
 }

@@ -1,44 +1,28 @@
 package com.medsys.medsysapi.db;
 
-import com.medsys.medsysapi.security.SecUserDetails;
-import com.medsys.medsysapi.security.SecUserDetailsService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.authentication.BadCredentialsException;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class QueryDispatcherTest {
-    @Mock
-    SecUserDetailsService secUserDetailsService;
     @Autowired
-    DataSource dataSource;
-    @InjectMocks
     QueryDispatcher queryDispatcher;
 
     @BeforeEach
-    void setUp() throws SQLException {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
-        queryDispatcher.dataSource = dataSource;
-        queryDispatcher.init();
     }
 
     @Test
-    public void testDispatch() throws QueryException {
+    public void testDispatch() {
         assertNotNull(queryDispatcher.dataSource);
         Connection c = null;
         try {
@@ -57,17 +41,17 @@ class QueryDispatcherTest {
     }
 
     @Test
-    void testGetSecUserDetails() throws QueryException {
+    void testGetSecUserDetails() {
 
     }
 
     @Test
-    void testGetIdUsername() throws QueryException {
+    void testGetIdUsername() {
 
     }
 
     @Test
-    void testCheckPasswordValid() throws QueryException {
+    void testCheckPasswordValid() {
 
     }
 }

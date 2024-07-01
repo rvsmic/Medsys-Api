@@ -15,13 +15,20 @@ public class SecUserToken {
     @Setter
     @Getter
     private Date expirationDate;
+    @Getter
+    private final int role_id;
 
     private static final SecureRandom secureRandom = new SecureRandom();
     private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder();
 
-    public SecUserToken(@Nullable Date expirationDate) {
+    public SecUserToken() {
+        this(0, null);
+    }
+
+    public SecUserToken(int role_id, @Nullable Date expirationDate) {
+        this.role_id = role_id;
         this.value = generateTokenValue();
-        this.expirationDate = expirationDate == null ? new Date(System.currentTimeMillis() + 1000 * 60 * 2) : expirationDate;
+        this.expirationDate = expirationDate == null ? new Date(System.currentTimeMillis() + 1000 * 60 * 30) : expirationDate;
     }
 
     private String generateTokenValue() {
@@ -42,5 +49,9 @@ public class SecUserToken {
     @JsonProperty("token")
     public String getValue() {
         return value;
+    }
+
+    public void refreshToken() {
+        this.expirationDate = new Date(System.currentTimeMillis() + 1000 * 60 * 30);
     }
 }
